@@ -1,0 +1,28 @@
+WindEnergyTK
++++++++++++++++++++++++
+
+.. contents ::
+
+Summary
+=======
+
+* A collection of codes that employs the techniques taught in UMass Amherst's Wind Energy Engineering course.
+* The codes are presented in six main groups:
+
+  * Data analysis,
+  * Data synthesis,
+  * Rotor aerodynamics,
+  * Electrical,
+  * Dynamics, and
+  * Turbine/System Performance.
+
+Get Started
+===========
+
+* Download instructions coming soon
+* Install with ``easy_install WindEnergyTK``.
+
+Author
+======
+
+`Alec Koumjian`_ akoumjian at gmail dot com

@@ -1,0 +1,74 @@
+Site Name: BARNSTABLE
+Location: Barnstable, MA
+Latitude [N]: 41.66483
+Longitude [W]: 70.30457
+Time Zone [hrs from GMT]: -5
+Elevation [m]: 21
+Time Step of Data [seconds]: 600
+Logger Sample Interval [seconds]: 2
+Report Time Period: 2006-01-01 to 2006-04-03 09:50:00
+Data Collection By: RERL @ Univ. of Massachusetts
+Report Generated: 2006-07-14 16:08:28
+Comments: 
+
+Sensors: Sensor Name, Type, Designation, Height Above Ground [m],Measurement Units
+Sensor #1: Etmp2DEGC,External Temperature,Primary,2,Units
+Sensor #2: EtmpSD2DEGC,External Temperature Standard Deviation,Primary,2,Units
+Sensor #3: Anem39aMS,Anemometer,Primary,39,m/s
+Sensor #4: AnemSD39aMS,Anemometer Standard Deviation,Primary,39,m/s
+Sensor #5: Anem39bMS,Anemometer,Secondary,39,m/s
+Sensor #6: AnemSD39bMS,Anemometer Standard Deviation,Secondary,39,m/s
+Sensor #7: Anem30aMS,Anemometer,Primary,30,m/s
+Sensor #8: AnemSD30aMS,Anemometer Standard Deviation,Primary,30,m/s
+Sensor #9: Anem30bMS,Anemometer,Secondary,30,m/s
+Sensor #10: AnemSD30bMS,Anemometer Standard Deviation,Secondary,30,m/s
+Sensor #11: Anem10MS,Anemometer,Primary,10,Units
+Sensor #12: AnemSD10MS,Anemometer Standard Deviation,Primary,10,Units
+Sensor #13: Vane39DEG,Wind Direction Vane,Primary,39,Units
+Sensor #14: VaneSD39DEG,Wind Direction Vane Standard Deviation,Primary,39,Units
+Sensor #15: Vane30DEG,Wind Direction Vane,Primary,30,Units
+Sensor #16: VaneSD30DEG,Wind Direction Vane Standard Deviation,Primary,30,Units
+Sensor #17: Vane10DEG,Wind Direction Vane,Primary,10,Units
+Sensor #18: VaneSD10DEG,Wind Direction Vane Standard Deviation,Primary,10,Units
+
+Applied Validation Filter Code, Filter Name
+-988, Dissimilar sensors
+-989, Out of Range
+-991, Icing or wet snow event
+-999, Missing Data
+
+***
+Day-Month-Year Hour:Minute,Etmp2DEGC,EtmpSD2DEGC,Anem39aMS,AnemSD39aMS,Anem39bMS,AnemSD39bMS,Anem30aMS,AnemSD30aMS,Anem30bMS,AnemSD30bMS,Anem10MS,AnemSD10MS,Vane39DEG,VaneSD39DEG,Vane30DEG,VaneSD30DEG,Vane10DEG,VaneSD10DEG
+
+2006-01-01 00:00,3.2,0,-988,-988,3.9,0.5,3.2,0.5,3.3,0.5,2,0.5,39,7,34,9,26,14
+2006-01-01 00:10,3.3,0,-988,-988,3.8,0.9,3.2,0.9,3.3,0.9,1.9,0.8,44,8,40,10,35,15
+2006-01-01 00:20,3.4,0,2.5,0.5,3.3,0.4,2.9,0.4,3,0.4,1.7,0.6,44,7,38,9,35,11
+2006-01-01 00:30,3.5,0,2.6,0.6,3.4,0.4,2.8,0.4,2.9,0.5,1.5,0.6,45,7,40,9,37,15
+2006-01-01 00:40,3.6,0.1,2.2,0.6,3,0.4,2.6,0.4,2.7,0.4,1.7,0.5,44,8,40,8,30,11
+2006-01-01 00:50,3.6,0,2.7,0.6,3.5,0.5,3.1,0.5,3.1,0.5,1.8,0.6,48,6,43,9,38,12
+2006-01-01 01:00,3.6,0,2.8,0.6,3.6,0.5,3,0.5,3.1,0.5,1.7,0.5,49,7,43,8,39,10
+2006-01-01 01:10,3.6,0,2.6,0.8,3.3,0.6,2.9,0.6,3,0.6,1.9,0.5,47,8,42,11,38,15
+2006-01-01 01:20,3.6,0,2.8,0.6,3.4,0.4,3,0.5,3.1,0.5,1.9,0.6,49,7,45,8,42,11
+2006-01-01 01:30,3.6,0,1.8,0.5,2.8,0.4,2.5,0.4,2.5,0.5,1.4,0.5,43,8,37,8,29,13
+2006-01-01 01:40,3.6,0,2,0.5,3,0.4,2.5,0.5,2.6,0.5,1.7,0.4,38,6,32,9,24,13
+2006-01-01 01:50,3.6,0,2.1,0.6,3,0.5,2.5,0.5,2.6,0.5,1.5,0.5,36,8,31,11,25,13
+2006-01-01 02:00,3.5,0,2.1,0.6,2.9,0.5,2.6,0.4,2.6,0.4,1.6,0.6,33,8,28,10,19,12
+2006-01-01 02:10,3.4,0.1,2.7,0.6,3.4,0.4,3,0.4,3,0.4,1.9,0.5,29,8,24,10,15,12
+2006-01-01 02:20,3.2,0.1,3.4,0.8,4,0.6,3.7,0.6,3.7,0.6,2.5,0.6,27,6,22,9,16,12
+2006-01-01 02:30,2.9,0,3.5,1,4.2,0.8,3.7,0.8,3.8,0.8,2.8,0.7,30,9,25,12,20,15
+2006-01-01 02:40,2.9,0,4.1,1,4.9,0.8,4.5,0.8,4.5,0.8,3.5,0.6,30,8,27,9,22,13
+2006-01-01 02:50,2.6,0.1,4.2,0.9,5.2,0.7,4.7,0.8,4.7,0.8,3.3,0.8,31,8,27,10,25,15
+2006-01-01 03:00,2.3,0,4.6,0.8,5.1,0.7,4.6,0.7,4.6,0.7,3.5,0.7,24,8,20,10,19,13
+2006-01-01 03:10,2.3,0,4.6,0.9,5,0.8,4.5,0.7,4.5,0.7,3.5,0.8,24,8,20,10,14,12
+2006-01-01 03:20,2.2,0.1,3.9,1,4.3,0.9,3.7,0.9,3.7,0.9,2.6,0.7,16,9,13,10,11,15
+2006-01-01 03:30,2.2,0.1,4.2,0.8,4.6,0.7,4.1,0.7,4.1,0.7,3,0.7,18,9,14,11,13,14
+2006-01-01 03:40,2.3,0.1,4.9,0.9,5.4,0.8,4.8,0.8,4.9,0.8,3.5,0.7,21,8,15,11,15,15
+2006-01-01 03:50,2.3,0,4.9,1,5.4,1,4.9,1,5,1,3.6,1,23,10,18,10,21,14
+2006-01-01 04:00,2.4,0.1,4.9,1,5.7,0.8,5,0.9,5.1,0.9,4,1,29,10,24,11,21,15
+2006-01-01 04:10,2.4,0.1,5.4,1.1,5.9,0.9,5.3,1,5.4,1,4,1,26,11,23,13,22,16
+2006-01-01 04:20,2.6,0.1,5.7,1.2,6.1,1.2,5.7,1.1,5.8,1.1,4.3,1.1,26,9,24,12,21,15
+2006-01-01 04:30,2.6,0,5.9,1.2,6.4,1.2,5.9,1.1,6,1.2,4.4,1.2,24,9,20,11,20,17
+2006-01-01 04:40,2.7,0,5.6,1.3,6.2,1.2,5.6,1.2,5.8,1.3,4.4,1.2,24,10,20,12,19,15
+2006-01-01 04:50,2.7,0,5.4,1.2,6.4,1,5.7,1,5.8,1,4.3,1,27,9,23,11,24,17
+2006-01-01 05:00,2.7,0,5.1,1.2,6.1,1.1,5.6,1.1,5.7,1.1,4.4,1,29,10,28,12,22,17
+2006-01-01 05:10,2.7,0,4.8,1.2,5.6,1.2,5,1.2,5,1.2,3.7,1,28,12,25,14,25,16
