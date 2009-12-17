@@ -37,8 +37,9 @@ import wx
 import wx.lib.intctrl as intctrl
 import wxmpl
 import os
-from windenergytk import file_ops, analysis, synthesis
-
+import windenergylib.analysis
+import windenergylib.synthesis
+import windenergylib.file_ops
 
 
 class MyFrame(wx.Frame):
