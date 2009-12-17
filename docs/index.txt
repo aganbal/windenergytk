@@ -1,28 +1,20 @@
-WindEnergyTK
-+++++++++++++++++++++++
+.. WindEnergyTK documentation master file, created by
+   sphinx-quickstart on Thu Dec 17 13:11:13 2009.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
 
-.. contents ::
+Welcome to WindEnergyTK's documentation!
+========================================
 
-Summary
-=======
+Contents:
 
-* A collection of codes that employs the techniques taught in UMass Amherst's Wind Energy Engineering course.
-* The codes are presented in six main groups:
+.. toctree::
+   :maxdepth: 2
 
-  * Data analysis,
-  * Data synthesis,
-  * Rotor aerodynamics,
-  * Electrical,
-  * Dynamics, and
-  * Turbine/System Performance.
+Indices and tables
+==================
 
-Get Started
-===========
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
 
-* Download instructions coming soon
-* Install with ``easy_install WindEnergyTK``.
-
-Author
-======
-
-`Alec Koumjian`_ akoumjian at gmail dot com
