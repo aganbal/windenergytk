@@ -35,7 +35,7 @@ setup(
     keywords='',
     author='Alec Koumjian',
     author_email='akoumjian@gmail.com',
-    url='',
+    url='http://code.google.com/p/windenergytk/',
     license='GPLv3',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
