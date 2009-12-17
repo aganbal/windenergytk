@@ -36,11 +36,8 @@
 import wx
 import wx.lib.intctrl as intctrl
 import wxmpl
-import file_ops
-import analysis
-import synthesis
 import os
-
+from windenergytk import file_ops, analysis, synthesis
 
 
 
