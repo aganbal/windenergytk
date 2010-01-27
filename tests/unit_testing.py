@@ -105,20 +105,78 @@ class SynthesisFunctions(unittest.TestCase):
         arma_ts = synthesis.gen_arma(mean, stdev, autocor, size)
         self.assertAlmostEqual(arma_ts.mean(), mean, 0)
         self.assertAlmostEqual(arma_ts.std(), stdev, 1)
-        self.assertAlmostEqual(analysis.autocorrelate(arma_ts, 1)[1][1], autocor, 2)
+        self.assertAlmostEqual(analysis.autocorrelate(arma_ts, 1)[1][1], autocor, 1)
         self.assertEqual(arma_ts.size, size)      
     
 #    def test_gen_markov_tpm(self):
 #        """Testing synthesis.gen_markov_tpm()"""
 ## TODO finish Synthesis Unit tests
 
-#class RotorAeroFunctions(unittest.TestCase):
-#    """Tests for the rotor aerodynamic functions."""
-#    
-
+class RotoraeroFunctions(unittest.TestCase):
+    """Tests for the rotor aerodynamic functions."""
+    def setUp(self):
+        self.rct_matrix = [[0,0,0]]
+        
+        self.rotor_stats = \
+        {'number_blades': 0,
+        'total_radius': 0.0,
+        'hub_radius': 0.0,
+        'tip_loss_factor': 0.0,
+        'tip_speed_ratio': 0.0,
+        'angle_of_attack': 0.0,
+        'angle_of_rwind': 0.0,
+        'lift_coefficient': 0.0,
+        'drag_coefficient': 0.0,
+        'axial_induction_factor': 0.0,
+        'angular_induction_factor': 0.0,
+        'local_power_coefficient': 0.0}
+    
+    def test_optimum_rotor(self):
+        """Testing aerodyn.optimum_rotor()"""
+        
+        results = aerodyn.optimum_rotor(self.rotor_stats['lift_coefficient'],
+                                        self.rotor_stats['angle_of_attack'], 
+                                        self.rotor_stats['tip_speed_ratio'], 
+                                        self.rotor_stats['total_radius'], 
+                                        self.rotor_stats['hub_radius'], 
+                                        self.rotor_stats['number_blades'], 
+                                        len(self.rct_matrix))
+        for i in range(len(results)):
+            self.assertEqual(results[i], self.rct_matrix[i])
+    
+    def test_linear(self):
+        """Testing aerodyn.linear_rotor_analysis()"""
+        linear_stats = aerodyn.linear_rotor_analysis(self.rct_matrix)
+        self.assertAlmostEqual(linear_stats['total_radius'], self.rotor_stats['total_radius'])
+        self.assertAlmostEqual(linear_stats['tip_loss_factor'], self.rotor_stats['tip_loss_factor'])
+        self.assertAlmostEqual(linear_stats['angle_of_attack'], self.rotor_stats['angle_of_attack'])
+        self.assertAlmostEqual(linear_stats['angle_of_rwind'], self.rotor_stats['angle_of_rwind'])
+        self.assertAlmostEqual(linear_stats['lift_coefficient'], self.rotor_stats['lift_coefficient'])
+        self.assertAlmostEqual(linear_stats['drag_coefficient'], self.rotor_stats['drag_coefficient'])
+        self.assertAlmostEqual(linear_stats['axial_induction_factor'], self.rotor_stats['axial_induction_factor'])
+        self.assertAlmostEqual(linear_stats['angular_induction_factor'], self.rotor_stats['angular_induction_factor'])
+        self.assertAlmostEqual(linear_stats['local_power_coefficient'], self.rotor_stats['local_power_coefficient'])
+    
+    def test_nonlinear(self):
+        """Testing aerodyn.nonlinear_rotor_analysis()"""
+        linear_stats = aerodyn.nonlinear_rotor_analysis(self.rct_matrix,
+                                                        self.rotor_stats['angle_of_attack'],
+                                                        self.rotor_stats['lift_coefficient'],
+                                                        self.rotor_stats['drag_coefficient'])
+        
+        self.assertAlmostEqual(linear_stats['total_radius'], self.rotor_stats['total_radius'])
+        self.assertAlmostEqual(linear_stats['tip_loss_factor'], self.rotor_stats['tip_loss_factor'])
+        self.assertAlmostEqual(linear_stats['angle_of_attack'], self.rotor_stats['angle_of_attack'])
+        self.assertAlmostEqual(linear_stats['angle_of_rwind'], self.rotor_stats['angle_of_rwind'])
+        self.assertAlmostEqual(linear_stats['lift_coefficient'], self.rotor_stats['lift_coefficient'])
+        self.assertAlmostEqual(linear_stats['drag_coefficient'], self.rotor_stats['drag_coefficient'])
+        self.assertAlmostEqual(linear_stats['axial_induction_factor'], self.rotor_stats['axial_induction_factor'])
+        self.assertAlmostEqual(linear_stats['angular_induction_factor'], self.rotor_stats['angular_induction_factor'])
+        self.assertAlmostEqual(linear_stats['local_power_coefficient'], self.rotor_stats['local_power_coefficient'])
 
 
 suite1 = unittest.TestLoader().loadTestsFromTestCase(AnalysisFunctions)
 suite2 = unittest.TestLoader().loadTestsFromTestCase(SynthesisFunctions)
-alltests = unittest.TestSuite((suite1, suite2))
+suite3 = unittest.TestLoader().loadTestsFromTestCase(RotoraeroFunctions)
+alltests = unittest.TestSuite((suite1, suite2, suite3))
 unittest.TextTestRunner(verbosity=2).run(alltests)
