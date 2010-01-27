@@ -57,6 +57,7 @@ def weighted_choice(cumu_prob_vector):
 def gen_arma(mean, stdev, autocor1, npoints):
     """Normally distributed timeseries using Autoregressive Moving Average."""
     ## Generate normally distributed noise array
+    ## WHY: Why use sqrt(1-autocor1**2) for STDEV?
     noise = np.random.normal(0, (1-autocor1**2)**.5, npoints)
     
     ## Create autoregressive list with noise
@@ -183,5 +184,6 @@ def add_diurnal(tseries, sine_period, peak_mag):
 # mean, stdev, autocorr, npointsx
 
 def gen_pdf(desired_mean, desired_stdev, bin_width):
+    ## TODO
     return 0
 ## Essentially this is the reverse of the histogram

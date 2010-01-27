@@ -35,20 +35,27 @@
 
 import unittest
 from windenergytk import analysis
+from windenergytk import synthesis
+from windenergytk import aerodyn
+from windenergytk import electrical
+from windenergytk import dynamics
+from windenergytk import performance
+
 import scikits.timeseries as ts
 import numpy
 
 
 
-class TestAnalysisFunctions(unittest.TestCase):
-    """Tests for analysis.get_statistics() function."""
+class AnalysisFunctions(unittest.TestCase):
+    """Tests for the analysis module."""
     def setUp(self):
+        """Create a scikites.timeseries object with set shape and size."""
         self.mu, self.sigma, self.size = 10, 2.5, 1000
         self.data = numpy.random.normal(self.mu, self.sigma, self.size)
         self.tseries = ts.time_series(self.data, start_date = "01-01-2001", freq="T")
 
-    def testdictstatvalues(self):
-        """Test get_statistics() with dictionary output"""
+    def test_dict_stat_values(self):
+        """Test analysis.get_statistics() with dictionary output"""
         statistics_dict = analysis.get_statistics(self.tseries)
         self.assertEqual(type(statistics_dict), dict)
         self.assertAlmostEqual(statistics_dict['mean'], self.mu, 0)
@@ -57,8 +64,8 @@ class TestAnalysisFunctions(unittest.TestCase):
         self.assertEqual(statistics_dict['min'], self.data.min())
         self.assertEqual(statistics_dict['size'], self.data.size)
     
-    def testliststatvalues(self):
-        """Test get_statistics() with list output"""
+    def test_list_stat_values(self):
+        """Test analysis.get_statistics() with list output"""
         statistics_list = analysis.get_statistics(self.tseries, output='list')
         self.assertEqual(type(statistics_list), list)
         self.assertAlmostEqual(statistics_list[0], self.mu, 0)
@@ -67,15 +74,15 @@ class TestAnalysisFunctions(unittest.TestCase):
         self.assertEqual(statistics_list[3], self.data.min())
         self.assertEqual(statistics_list[4], self.data.size)
 
-    def testhistogramdata(self):
-        """Test get_histogram_data()"""
+    def test_histogram_data(self):
+        """Test analysis.get_histogram_data()"""
         hdata = analysis.get_histogram_data(self.tseries, bins=10, normalized=True)
         numhdata = numpy.histogram(self.tseries, bins=10, normed=True)
         self.assertEqual(hdata[0].all(), numhdata[0].all())
         self.assertEqual(hdata[1].all(), numhdata[1].all())
     
-    def testweibullparams(self):
-        """Validate get_weibull_params()"""
+    def test_weibull_params(self):
+        """Testing analysis.get_weibull_params()"""
         ## Generate single variable weibull distribution
         c, k = 1., 1.5
         weibull_data = numpy.array(numpy.random.weibull(k, 10000))
@@ -86,8 +93,32 @@ class TestAnalysisFunctions(unittest.TestCase):
         test_c, test_k = analysis.get_weibull_params(stats['mean'],stats['std'])
         self.assertAlmostEqual(k, test_k, 1)
         self.assertAlmostEqual(c, test_c, 1)
-        
+
+class SynthesisFunctions(unittest.TestCase):
+    """Tests for the synthesis functions."""
+    def test_ARMA(self):
+        """Testing synthesis.gen_arma()"""
+        mean = 0.
+        stdev = 1.
+        autocor = .9
+        size = 10000
+        arma_ts = synthesis.gen_arma(mean, stdev, autocor, size)
+        self.assertAlmostEqual(arma_ts.mean(), mean, 0)
+        self.assertAlmostEqual(arma_ts.std(), stdev, 1)
+        self.assertAlmostEqual(analysis.autocorrelate(arma_ts, 1)[1][1], autocor, 2)
+        self.assertEqual(arma_ts.size, size)      
+    
+#    def test_gen_markov_tpm(self):
+#        """Testing synthesis.gen_markov_tpm()"""
+## TODO finish Synthesis Unit tests
+
+#class RotorAeroFunctions(unittest.TestCase):
+#    """Tests for the rotor aerodynamic functions."""
+#    
 
 
-suite = unittest.TestLoader().loadTestsFromTestCase(TestAnalysisFunctions)
-unittest.TextTestRunner(verbosity=2).run(suite)
+
+suite1 = unittest.TestLoader().loadTestsFromTestCase(AnalysisFunctions)
+suite2 = unittest.TestLoader().loadTestsFromTestCase(SynthesisFunctions)
+alltests = unittest.TestSuite((suite1, suite2))
+unittest.TextTestRunner(verbosity=2).run(alltests)
