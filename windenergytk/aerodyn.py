@@ -53,6 +53,7 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
         twist: (float)
     
     """
+    
     return [0,0,0]
 
 def linear_rotor_analysis(rct_matrix):

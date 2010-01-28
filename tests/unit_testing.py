@@ -104,7 +104,7 @@ class SynthesisFunctions(unittest.TestCase):
         size = 10000
         arma_ts = synthesis.gen_arma(mean, stdev, autocor, size)
         self.assertAlmostEqual(arma_ts.mean(), mean, 0)
-        self.assertAlmostEqual(arma_ts.std(), stdev, 1)
+        self.assertAlmostEqual(arma_ts.std(), stdev, 0)
         self.assertAlmostEqual(analysis.autocorrelate(arma_ts, 1)[1][1], autocor, 1)
         self.assertEqual(arma_ts.size, size)      
     
@@ -115,17 +115,26 @@ class SynthesisFunctions(unittest.TestCase):
 class RotoraeroFunctions(unittest.TestCase):
     """Tests for the rotor aerodynamic functions."""
     def setUp(self):
-        self.rct_matrix = [[0,0,0]]
+        self.rct_matrix = [[0.1, 1.66, 31.3],
+                           [0.2, 1.41, 18.3],
+                           [0.3, 1.1, 11.6],
+                           [0.4, 0.87, 7.7],
+                           [0.5, 0.72, 5.2],
+                           [0.6, 0.61, 3.5],
+                           [0.7, 0.53, 2.3],
+                           [0.8, 0.46, 1.3],
+                           [0.9, 0.41, 0.6],
+                           [1.0, 0.37, 0]]
         
         self.rotor_stats = \
-        {'number_blades': 0,
-        'total_radius': 0.0,
-        'hub_radius': 0.0,
+        {'number_blades': 3,
+        'total_radius': 10.,
+        'hub_radius': 1.0,
         'tip_loss_factor': 0.0,
-        'tip_speed_ratio': 0.0,
-        'angle_of_attack': 0.0,
+        'tip_speed_ratio': 7.0,
+        'angle_of_attack': 7.0,
         'angle_of_rwind': 0.0,
-        'lift_coefficient': 0.0,
+        'lift_coefficient': 1.0,
         'drag_coefficient': 0.0,
         'axial_induction_factor': 0.0,
         'angular_induction_factor': 0.0,

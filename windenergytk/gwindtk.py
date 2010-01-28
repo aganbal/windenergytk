@@ -33,6 +33,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
 
+import wxversion
+wxversion.select('2.8')
 import wx
 import wx.lib.intctrl as intctrl
 import wxmpl
