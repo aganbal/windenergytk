@@ -32,7 +32,8 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
 
-
+from numpy import arctan
+from math import pi
 
 def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
                   total_radius, hub_radius, number_blades, sections):
@@ -53,8 +54,14 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
         twist: (float)
     
     """
+    sct_matrix = []
     
-    return [0,0,0]
+    for i in range(sections):
+        ## Calculate twist and chord for each section
+        twist = arctan(2./(3.*tip_speed_ratio[r])) ## partial tip speed ratio ?
+        chord = (8. * pi * r numpy.sin(twist))/ (3. * number_blades * lift_coefficient * tip_speed_ratio[r])
+        sct_matrix.append([i, twist, chord])
+    return sct_matrix
 
 def linear_rotor_analysis(rct_matrix):
     """Uses a linear approx. of lift curve to estimate turbine rotor performance.
