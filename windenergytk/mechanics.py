@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 ################################################################################
-# dynamics.py                                                                  #
+# mechanics.py                                                                 #
 #                                                                              #
 # Part of UMass Amherst's Wind Energy Engineering Toolbox of Mini-Codes        #
 #                   (or Mini-Codes for short)                                  #
@@ -31,3 +31,9 @@
 #    You should have received a copy of the GNU General Public License         #
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
+
+def uniform_beam_vibrations():
+    return 0
+
+def nonuniform_beam_vibrations():
+    return 0

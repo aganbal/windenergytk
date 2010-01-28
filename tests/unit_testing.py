@@ -38,7 +38,7 @@ from windenergytk import analysis
 from windenergytk import synthesis
 from windenergytk import aerodyn
 from windenergytk import electrical
-from windenergytk import dynamics
+from windenergytk import mechanics
 from windenergytk import performance
 
 import scikits.timeseries as ts
@@ -126,6 +126,7 @@ class RotoraeroFunctions(unittest.TestCase):
                            [0.9, 0.41, 0.6],
                            [1.0, 0.37, 0]]
         
+        ## TODO: create numbers for rotor performance testing
         self.rotor_stats = \
         {'number_blades': 3,
         'total_radius': 10.,
@@ -183,9 +184,39 @@ class RotoraeroFunctions(unittest.TestCase):
         self.assertAlmostEqual(linear_stats['angular_induction_factor'], self.rotor_stats['angular_induction_factor'])
         self.assertAlmostEqual(linear_stats['local_power_coefficient'], self.rotor_stats['local_power_coefficient'])
 
+class MechanicsFunctions(unittest.TestCase):
+    def setUp(self):
+        self.beam_length = 0
+        self.area_moment_of_inertia = 0
+        self.length_density = 0
+        self.modulus_of_elasticity = 0
+        self.range = 0
+        self.frequency_step = 0
+        self.uniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
+        self.volume_density = 0
+        
+        
+    def test_uniform_beam(self):
+        """Testing mechanics.uniform_beam_vibrations()"""
+        test_results = mechanics.uniform_beam_vibrations(self.beam_length, 
+                                          self.area_moment_of_inertia, 
+                                          self.mass_per_length, 
+                                          self.modulus_of_elasticity, 
+                                          self.range, self.frequency_step)
+        for i in range(len(self.uniform_natural_frequencies)):
+            self.assertEqual(test_results[i], self.uniform_natural_frequencies[i])
+    
+    def test_nonuniform_beam(self):
+        """Testing mechanics.nonuniform_beam_vibrations()"""
+        test_results = mechanics.nonuniform_beam_vibrations()
+        
+        for i in range(len(self.nonuniform_natural_frequencies)):
+            self.assertEqual(test_results[i], self.nonuniform_natural_frequencies[i])
+    
 
 suite1 = unittest.TestLoader().loadTestsFromTestCase(AnalysisFunctions)
 suite2 = unittest.TestLoader().loadTestsFromTestCase(SynthesisFunctions)
 suite3 = unittest.TestLoader().loadTestsFromTestCase(RotoraeroFunctions)
-alltests = unittest.TestSuite((suite1, suite2, suite3))
+suite4 = unittest.TestLoader().loadTestsFromTestCase(MechanicsFunctions)
+alltests = unittest.TestSuite((suite1, suite2, suite3, suite4))
 unittest.TextTestRunner(verbosity=2).run(alltests)
