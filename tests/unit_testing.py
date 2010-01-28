@@ -213,6 +213,8 @@ class MechanicsFunctions(unittest.TestCase):
         for i in range(len(self.nonuniform_natural_frequencies)):
             self.assertEqual(test_results[i], self.nonuniform_natural_frequencies[i])
     
+    
+    
 
 suite1 = unittest.TestLoader().loadTestsFromTestCase(AnalysisFunctions)
 suite2 = unittest.TestLoader().loadTestsFromTestCase(SynthesisFunctions)

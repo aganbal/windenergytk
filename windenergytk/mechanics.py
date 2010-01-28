@@ -37,3 +37,4 @@ def uniform_beam_vibrations():
 
 def nonuniform_beam_vibrations():
     return 0
+
