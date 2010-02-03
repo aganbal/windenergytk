@@ -214,7 +214,11 @@ class MechanicsFunctions(unittest.TestCase):
             self.assertEqual(test_results[i], self.nonuniform_natural_frequencies[i])
     
     
-    
+## TODO: Finish  synthesis functions
+## finish aero tests
+## finish mechanics tests
+## start electrical tests
+## start system tests
 
 suite1 = unittest.TestLoader().loadTestsFromTestCase(AnalysisFunctions)
 suite2 = unittest.TestLoader().loadTestsFromTestCase(SynthesisFunctions)
