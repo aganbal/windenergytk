@@ -31,3 +31,16 @@
 #    You should have received a copy of the GNU General Public License         #
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
+
+def complex_arithmetic():
+    """This procedure can be used to perform complex arithmetic as is useful for analysis of AC power"""
+    return 0
+
+def induction_gen_model():
+    """This procedure is used to analyze an induction generator/motor."""
+    return 0
+
+def synchronous_gen_model():
+    """This procedure is used to analyze a round rotor synchronous generator."""
+    return 0
+

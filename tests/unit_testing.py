@@ -186,15 +186,18 @@ class RotoraeroFunctions(unittest.TestCase):
 
 class MechanicsFunctions(unittest.TestCase):
     def setUp(self):
-        self.beam_length = 0
+        self.beam_length = 10
+        self.dimensions = [[0,0,0],[0,0,0],[0,0,0],[0,0,0]] ##[[x/L, area, moment of inertia]]
         self.area_moment_of_inertia = 0
         self.mass_per_length = 0
+        self.mass_per_volume = 0
         self.modulus_of_elasticity = 0
         self.range = 0
         self.frequency_step = 0
         self.uniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
         self.nonuniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
-        self.volume_density = 0
+        self.rotating_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
+        self.flapping_angle = 0
         
         
     def test_uniform_beam(self):
@@ -209,10 +212,96 @@ class MechanicsFunctions(unittest.TestCase):
     
     def test_nonuniform_beam(self):
         """Testing mechanics.nonuniform_beam_vibrations()"""
-        test_results = mechanics.nonuniform_beam_vibrations()
+        test_results = mechanics.nonuniform_beam_vibrations(self.beam_length,
+                                                            self.area_moment_of_inertia,
+                                                            self.mass_per_volume,
+                                                            self.modulus_of_elasticity,
+                                                            self.dimensions,
+                                                            self.range, 
+                                                            self.frequency_step,
+                                                            self.angular_velocity)
         
         for i in range(len(self.nonuniform_natural_frequencies)):
             self.assertEqual(test_results[i], self.nonuniform_natural_frequencies[i])
+    
+    def test_hinge_spring(self):
+        """Testing mechanics.hinge_spring_model()"""
+        test_results = mechanics.hinge_spring_flapping(self.number_of_blades, 
+                                                       self.rotor_radius, 
+                                                       self.blade_chord,
+                                                       self.airfoil_lift_curve_slope, 
+                                                       self.blade_pitch_angle, 
+                                                       self.nonrotating_natural_freq, 
+                                                       self.rotating_natural_freq, 
+                                                       self.blade_mass, 
+                                                       self.blade_offset, 
+                                                       self.rotational_speed, 
+                                                       self.tip_speed_ratio, 
+                                                       self.wind_shear_coefficient,
+                                                       self.cross_flow, 
+                                                       self.yaw_rate, 
+                                                       self.air_density)
+        self.assertEqual(test_results, self.flapping_angle)
+    
+    def test_rotating_freq(self):
+        """Testing mechanics.rotational_natural_freq()"""
+        test_results = mechanics.rotational_natural_freq(self.number_of_nodes, 
+                                                        self.list_of_inertias, 
+                                                        self.list_shaft_stiffness, 
+                                                        self.start_freq, 
+                                                        self.ending_freq, 
+                                                        self.freq_step)
+        self.assertEqual(test_results, self.rotating_natural_frequencies)
+    
+    def test_rainflow_cycle(self):
+        """Testing mechanics.rainflow_cycle_counting()"""
+        text_results = mechanics.rainflow_cycle_counting(self.tseries)
+        self.assertEqual(test_results, self.cycles)
+
+class ElectricalFunctions(unittest.TestCase):
+    def setUp(self):
+        self.stuff = 0
+    
+    def test_complex_arithmetic(self):
+        """Testing electrical.complex_arithmetic()"""
+        self.assertEqual(0, 1)
+    
+    def test_induction_gen_model(self):
+        """Testing electrical.induction_gen_model()"""
+        self.assertEqual(0, 1)
+    
+    def test_synchronous_gen_model(self):
+        """Testing electrical.synchronous_gen_model()"""
+        self.assertEqual(0, 1)
+
+class PerformanceFunctions(unittest.TestCase):
+    def setUp(self):
+        self.stuff = 0
+    
+    def test_power_curve(self):
+        """Testing performance.power_curve_estimation()"""
+        self.assertEqual(0, 1)
+    
+    def test_average_power(self):
+        """Testing performance.average_power_output()"""
+        self.assertEqual(0, 1)
+    
+    def test_life_economics(self):
+        """Testing performance.life_cycle_economics()"""
+        self.assertEqual(0, 1)
+    
+    def test_wind_diesel(self):
+        """Testing performance.wind_diesel_system()"""
+        self.assertEqual(0, 1)
+    
+    def test_battery_discharge_capacity(self):
+        """Testing performance.battery_discharge_capacity()"""
+        self.assertEqual(0, 1)
+    
+    def test_noise_estimation(self):
+        """Testing performance.noise_estimation()"""
+        self.assertEqual(0,1)
+    
     
     
 ## TODO: Finish  synthesis functions
@@ -225,5 +314,7 @@ suite1 = unittest.TestLoader().loadTestsFromTestCase(AnalysisFunctions)
 suite2 = unittest.TestLoader().loadTestsFromTestCase(SynthesisFunctions)
 suite3 = unittest.TestLoader().loadTestsFromTestCase(RotoraeroFunctions)
 suite4 = unittest.TestLoader().loadTestsFromTestCase(MechanicsFunctions)
-alltests = unittest.TestSuite((suite1, suite2, suite3, suite4))
+suite5 = unittest.TestLoader().loadTestsFromTestCase(ElectricalFunctions)
+suite6 = unittest.TestLoader().loadTestsFromTestCase(PerformanceFunctions)
+alltests = unittest.TestSuite((suite1, suite2, suite3, suite4, suite5, suite6))
 unittest.TextTestRunner(verbosity=2).run(alltests)

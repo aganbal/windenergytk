@@ -31,3 +31,27 @@
 #    You should have received a copy of the GNU General Public License         #
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
+
+def power_curve_estimation():
+    """"""
+    return 0
+
+def average_power_output():
+    """"""
+    return 0
+
+def life_cycle_economics():
+    """"""
+    return 0
+
+def wind_diesel_system():
+    """"""
+    return 0
+
+def battery_discharge_capacity():
+    """"""
+    return 0
+
+def noise_estimation():
+    """"""
+    return 0
