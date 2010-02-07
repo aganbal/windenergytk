@@ -188,11 +188,12 @@ class MechanicsFunctions(unittest.TestCase):
     def setUp(self):
         self.beam_length = 0
         self.area_moment_of_inertia = 0
-        self.length_density = 0
+        self.mass_per_length = 0
         self.modulus_of_elasticity = 0
         self.range = 0
         self.frequency_step = 0
         self.uniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
+        self.nonuniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
         self.volume_density = 0
         
         
