@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 ################################################################################
 # mechanics.py                                                                 #
@@ -31,12 +32,63 @@
 #    You should have received a copy of the GNU General Public License         #
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
+import numpy
 
-def uniform_beam_vibrations(beam_length, area_moment_of_inertia, 
-                            mass_per_length, modulus_of_elasticity, 
-                            range, frequency_step):
-    """Estimate the natural freq of uniform cantilevered beam (Euler)."""
-    return 0
+def uniform_beam_vibrations(beam_length, area_moment, 
+                            mass_per_length, elastic_modulus, 
+                            frequency_range, frequency_step, number_of_modes):
+    """Estimate the natural freq of uniform cantilevered beam (Euler).
+    
+    INPUT
+    beam_length: (float) length of beam
+    area_moment: (float) area moment of inertia for the beam
+    mass_per_length: (float) the length density, mass per unit length
+    elastic_modulus: (float) stress / strain
+    range: (float)
+    frequency_step: (float)
+    number_of_modes: (int) number of natural frequencies to find
+    
+    OUTPUT
+    frequencies: (array-like) 3*x [[mode (int), natural_freq (float), beta(float)]]
+        mode: (int) which number mode frequency applies to
+        natural_freq: (float) natural frequency for mode
+    beta: (float) parameter that relates to 
+    
+    For reference see:
+    Manwell Chapter 4 p. 153
+    http://en.wikipedia.org/wiki/Euler–Bernoulli_beam_equation
+    """
+    # We are solving Eqn. 4.2.31 in Manwell et. al
+    # natural_freq_i = (Beta*L)_i**2 * 1/L**2 * Sqrt((E I)/rho)
+    frequencies = []
+    
+    # First we calculate 1/L**2 * Sqrt((E I)/rho)
+    frequency_constant = numpy.sqrt((elastic_modulus * area_moment) / mass_per_length) / (beam_length**2)
+    
+    for mode in range(number_of_modes):
+        # Now we calculate Beta*L iteratively using the Euler method
+        # Start at 0 as random value
+        beta_l = 0
+        # Start error at high number
+        epsilon = 1
+        while abs(epsilon) >= .01:
+            beta_l_1 = beta_l
+            beta_l = beta_l + frequency_step
+            epsilon = numpy.cosh(beta_l) * numpy.cos(beta_l) + 1
+            epsilon_1 = numpy.cosh(beta_l_1) * numpy.cos(beta_l_1) + 1
+            if abs(epsilon_1) < abs(epsilon):
+                epsilon
+        
+        # Calculate natural frequency for mode i using Eqn. 4.2.31
+        natural_freq = (beta_l**2) * frequency_constant
+        
+        # Calculate beta
+        beta = beta_l / beam_length
+        
+        # Add to frequency list
+        frequencies.append([mode, frequency, beta])
+    
+    return frequencies
 
 def nonuniform_beam_vibrations():
     """Estimate natural freq of nonuniform vibrating cantilevered beam (Myklestad)"""

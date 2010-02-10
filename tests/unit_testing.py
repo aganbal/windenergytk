@@ -191,9 +191,10 @@ class MechanicsFunctions(unittest.TestCase):
         self.mass_per_length = 0
         self.mass_per_volume = 0
         self.modulus_of_elasticity = 0
+        self.beta = 0
         self.range = 0
         self.frequency_step = 0
-        self.uniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
+        self.uniform_natural_frequencies = [[1,3.52],[2,22.4],[3,61.7]]
         self.nonuniform_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
         self.rotating_natural_frequencies = [[0,0],[0,0],[0,0],[0,0]]
         self.flapping_angle = 0
@@ -206,8 +207,9 @@ class MechanicsFunctions(unittest.TestCase):
                                           self.mass_per_length, 
                                           self.modulus_of_elasticity, 
                                           self.range, self.frequency_step)
+        self.assertEqual(test_results[1], self.beta)
         for i in range(len(self.uniform_natural_frequencies)):
-            self.assertEqual(test_results[i], self.uniform_natural_frequencies[i])
+            self.assertEqual(test_results[0][i], self.uniform_natural_frequencies[i])
     
     def test_nonuniform_beam(self):
         """Testing mechanics.nonuniform_beam_vibrations()"""
@@ -254,7 +256,7 @@ class MechanicsFunctions(unittest.TestCase):
     
     def test_rainflow_cycle(self):
         """Testing mechanics.rainflow_cycle_counting()"""
-        text_results = mechanics.rainflow_cycle_counting(self.tseries)
+        test_results = mechanics.rainflow_cycle_counting(self.tseries)
         self.assertEqual(test_results, self.cycles)
 
 class ElectricalFunctions(unittest.TestCase):
