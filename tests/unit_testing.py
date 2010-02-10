@@ -45,7 +45,6 @@ import scikits.timeseries as ts
 import numpy
 
 
-
 class AnalysisFunctions(unittest.TestCase):
     """Tests for the analysis module."""
     def setUp(self):
