@@ -62,23 +62,18 @@ def uniform_beam_vibrations(beam_length, area_moment,
     # natural_freq_i = (Beta*L)_i**2 * 1/L**2 * Sqrt((E I)/rho)
     frequencies = []
     
+    # beta_l values are the solutions to the transcandental equation
+    # cosh(beta_l)cos(beta_l) + 1 = 0
+    # The first four solutions have been solved using the euler method
+    # accurate to 17 digits of precision
+    # For additional modes, beta_l approaches very close to zero
+    beta_l = []
     # First we calculate 1/L**2 * Sqrt((E I)/rho)
     frequency_constant = numpy.sqrt((elastic_modulus * area_moment) / mass_per_length) / (beam_length**2)
     
-    for mode in range(number_of_modes):
-        # Now we calculate Beta*L iteratively using the Euler method
-        # Start at 0 as random value
-        beta_l = 0
-        # Start error at high number
-        epsilon = 1
-        while abs(epsilon) >= .01:
-            beta_l_1 = beta_l
-            beta_l = beta_l + frequency_step
-            epsilon = numpy.cosh(beta_l) * numpy.cos(beta_l) + 1
-            epsilon_1 = numpy.cosh(beta_l_1) * numpy.cos(beta_l_1) + 1
-            if abs(epsilon_1) < abs(epsilon):
-                epsilon
-        
+
+    
+    
         # Calculate natural frequency for mode i using Eqn. 4.2.31
         natural_freq = (beta_l**2) * frequency_constant
         
