@@ -3,7 +3,7 @@
 
 
 ################################################################################
-# euler_method_beta_l.py                                                                   #
+# euler_method_demo.py                                                         #
 #                                                                              #
 # Part of UMass Amherst's Wind Energy Engineering Toolbox of Mini-Codes        #
 #                   (or Mini-Codes for short)                                  #
@@ -38,7 +38,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # We want to find solutions to the equation:
-# cosh(x)cos(x) + 1 = 0
+# cosh(x)cos(x) + 1 = 0 for x
 
 # Plotting the solutions
 # To get a better understanding of the solutions we're looking for, 
@@ -53,23 +53,30 @@ def show_graph():
     fig = plt.figure()
     plt.grid()
     ax = fig.add_subplot(111)
-    ax.plot(x, y,'-',x, y_2,'-')
+    ax.plot(x, y,'-', x, y_2,'-')
     plt.axis([-10,10,-2,2])
     plt.show()
 
 def epsilon(x):
     return np.cosh(x) * np.cos(x) + 1
 
-def solve(number_of_solutions=3, y=0.0, step=1, target_epsilon=0.001):
+def solve(number_of_solutions=4, y=0.0, step=1, target_epsilon=0.00000000001):
     """Iteratively solve cosh(y)cos(y) + 1 = 0 for y using the Euler method"""
     
-    solutions = []    
+    
+    solutions = []
+    
+    # Look for solutions until we have enough for our purposes.
     while len(solutions) < number_of_solutions:
         y_1 = y
         y = y + step
         epsilon_y = epsilon(y)
         epsilon_y_1 = epsilon(y_1)
+        
+        # Only when y and y_1 surround a solution do we hone in on the solution
         if np.sign(epsilon_y) != np.sign(epsilon_y_1):
+            
+            # Iterate closer to solution until either y or y_1 are within range
             while (abs(epsilon_y) > target_epsilon) and (abs(epsilon_y_1) > target_epsilon):
                 n = (y_1 + y)/2
                 epsilon_n = epsilon(n)
@@ -79,6 +86,7 @@ def solve(number_of_solutions=3, y=0.0, step=1, target_epsilon=0.001):
                     y_1 = n
                 else:
                     y = n
+            # Add whichever marker is closer to solution
             if abs(epsilon_y) < abs(epsilon_y_1):
                 solutions.append(y)
             else:
