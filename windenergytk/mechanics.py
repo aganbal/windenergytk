@@ -35,24 +35,19 @@
 import numpy
 
 def uniform_beam_vibrations(beam_length, area_moment, 
-                            mass_per_length, elastic_modulus, 
-                            frequency_range, frequency_step, number_of_modes):
-    """Estimate the natural freq of uniform cantilevered beam (Euler).
+                            mass_per_length, elastic_modulus, mode):
+    """Estimate the natural freq of uniform cantilevered beam.
     
     INPUT
     beam_length: (float) length of beam
     area_moment: (float) area moment of inertia for the beam
     mass_per_length: (float) the length density, mass per unit length
     elastic_modulus: (float) stress / strain
-    range: (float)
-    frequency_step: (float)
-    number_of_modes: (int) number of natural frequencies to find
+    mode: (int): The number mode to find a natural frequency for
     
     OUTPUT
-    frequencies: (array-like) 3*x [[mode (int), natural_freq (float), beta(float)]]
-        mode: (int) which number mode frequency applies to
-        natural_freq: (float) natural frequency for mode
-    beta: (float) parameter that relates to 
+    natural_frequency: (float) frequency for input mode
+    beta: (float) parameter calculated from beta_l
     
     For reference see:
     Manwell Chapter 4 p. 153
@@ -60,30 +55,35 @@ def uniform_beam_vibrations(beam_length, area_moment,
     """
     # We are solving Eqn. 4.2.31 in Manwell et. al
     # natural_freq_i = (Beta*L)_i**2 * 1/L**2 * Sqrt((E I)/rho)
-    frequencies = []
     
     # beta_l values are the solutions to the transcandental equation
     # cosh(beta_l)cos(beta_l) + 1 = 0
     # The first four solutions have been solved using the euler method
-    # accurate to 17 digits of precision
-    # For additional modes, beta_l approaches very close to zero
-    beta_l = []
-    # First we calculate 1/L**2 * Sqrt((E I)/rho)
+    # accurate to 11 digits of precision
+    # For additional modes, solutions for beta_l approach cos(beta_l) +1 = 0
+    # See ../examples/euler_method_demo.py
+    
+    beta_l_list = [1.8751040687129716, 4.6940911329743358, 
+              7.8547574382376126, 10.995540734875467]
+    
+    # Now we calculate 1/L**2 * Sqrt((E I)/rho)
     frequency_constant = numpy.sqrt((elastic_modulus * area_moment) / mass_per_length) / (beam_length**2)
     
-
     
+    # Use correct beta_l for mode
+    if mode <= 4:
+        beta_l = beta_l_list[mode-1]
+    else:
+        # beta_l approximates values of x for cos(x) = 0
+        beta_l = mode*2.*numpy.pi - numpy.pi/2.
     
-        # Calculate natural frequency for mode i using Eqn. 4.2.31
-        natural_freq = (beta_l**2) * frequency_constant
+    # Calculate natural frequency for mode using Eqn. 4.2.31
+    natural_freq = (beta_l**2) * frequency_constant
         
-        # Calculate beta
-        beta = beta_l / beam_length
-        
-        # Add to frequency list
-        frequencies.append([mode, frequency, beta])
-    
-    return frequencies
+    # Calculate beta
+    beta = beta_l / beam_length
+            
+    return natural_freq, beta
 
 def nonuniform_beam_vibrations():
     """Estimate natural freq of nonuniform vibrating cantilevered beam (Myklestad)"""

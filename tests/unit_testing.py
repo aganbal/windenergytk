@@ -202,12 +202,12 @@ class MechanicsFunctions(unittest.TestCase):
         
     def test_uniform_beam(self):
         """Testing mechanics.uniform_beam_vibrations()"""
-        test_results = mechanics.uniform_beam_vibrations(self.beam_length, 
+        test_results = []
+        for i in range(1,6):
+            test_results.append(mechanics.uniform_beam_vibrations(self.beam_length, 
                                           self.area_moment_of_inertia, 
                                           self.mass_per_length, 
-                                          self.modulus_of_elasticity, 
-                                          self.range, self.frequency_step)
-        self.assertEqual(test_results[1], self.beta)
+                                          self.modulus_of_elasticity, i))
         for i in range(len(self.uniform_natural_frequencies)):
             self.assertEqual(test_results[0][i], self.uniform_natural_frequencies[i])
     

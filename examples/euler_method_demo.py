@@ -97,8 +97,6 @@ def solve(number_of_solutions=4, y=0.0, step=1, target_epsilon=0.00000000001):
 
 
 if __name__ == "__main__":
-    print "The first three solutions for x are:"
+    print "The first solutions for x are:"
     print solve()
     show_graph()
-
-    
