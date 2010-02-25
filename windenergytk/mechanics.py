@@ -101,15 +101,15 @@ def myklestad_beam_vibrations(beam_length, area_moment_of_inertia,
     'omegaStart! = starting frequency in calculations, rad/s
     'omegaFinal! = ending frequency in calculations, rad/s
     'deltaOmega! = frequency step
-
-beam_length,
-area_moment_of_inertia,
-mass_per_volume,
-modulus_of_elasticity,
-dimensions,
-angular_velocity,
-range, 
-frequency_step,
+    INPUT
+    beam_length:
+    area_moment_of_inertia:
+    mass_per_volume:
+    modulus_of_elasticity:
+    dimensions:
+    angular_velocity:
+    range:
+    frequency_step:
 """
     return 0
 
