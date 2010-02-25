@@ -34,7 +34,7 @@
 ################################################################################
 import numpy
 
-def uniform_beam_vibrations(beam_length, area_moment, 
+def euler_beam_vibrations(beam_length, area_moment, 
                             mass_per_length, elastic_modulus, mode):
     """Estimate the natural freq of uniform cantilevered beam.
     
@@ -85,9 +85,32 @@ def uniform_beam_vibrations(beam_length, area_moment,
             
     return natural_freq, beta
 
-def nonuniform_beam_vibrations():
-    """Estimate natural freq of nonuniform vibrating cantilevered beam (Myklestad)"""
-    
+def myklestad_beam_vibrations(beam_length, area_moment_of_inertia,
+                               mass_per_volume, modulus_of_elasticity, 
+                               dimensions, angular_velocity,range, 
+                               frequency_step):
+    """Estimate the natural freq of a nonuniform vibrating cantilevered beam.
+    'Inputs
+    'aLength!() =length of section
+    'eYoungs! = Young's modulus of material
+    'rhoMaterial! = density of material
+    'EI!() = stiffness of section
+    'nSections% = number of sections
+    'aMass!() = mass of section
+    'rpm= rotational speed
+    'omegaStart! = starting frequency in calculations, rad/s
+    'omegaFinal! = ending frequency in calculations, rad/s
+    'deltaOmega! = frequency step
+
+beam_length,
+area_moment_of_inertia,
+mass_per_volume,
+modulus_of_elasticity,
+dimensions,
+angular_velocity,
+range, 
+frequency_step,
+"""
     return 0
 
 def hinge_spring_flapping(number_of_blades, rotor_radius, blade_chord, 
