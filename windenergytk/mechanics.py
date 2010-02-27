@@ -34,8 +34,8 @@
 ################################################################################
 import numpy
 
-def euler_beam_vibrations(beam_length, area_moment, 
-                            mass_per_length, elastic_modulus, mode):
+def euler_beam_vibrations(beam_length, area_moment, mass_per_length, 
+                          elastic_modulus, mode):
     """Estimate the natural freq of uniform cantilevered beam.
     
     INPUT
