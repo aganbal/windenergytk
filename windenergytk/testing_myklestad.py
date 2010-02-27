@@ -53,6 +53,8 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
     nat_frequencies: (array-like) list of natural frequencies
     """
     # MODS
+    # For explanation of how this works, see ../examples/explaining_myklestad.py
+    # 
     # No input for number of sections, redundant when there is a list
     # of lengths and masses
     # 
@@ -65,5 +67,30 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
     # Input rotational velocity as rad/s instead of rpm (use external function
     # to sanitize input)
     
+    # Create empty arrays
+    slope = np.empty([2,len(sec_lengths)])
+    deflection = np.empty([2,len(sec_lengths)])
+    f_cent = np.empty([2,len(sec_lengths)])
+    vert_shear = np.empty([2,len(sec_lengths)])
+    bend_moment = np.empty([2,len(sec_lengths)])
+    
+    # Initial conditions for two components
+    initial_slope = [0, 1]
+    initial_deflection = [1, 0]
+    
+    
+    # Iterate through range of possible natural frequencies
+    for freq in range(freq_start, freq_final, freq_step):
+        # Calculate two sets of deflec/slope for linear combination
+        for i in range(2):
+            slope[i][0] = initial_slope[i]
+            deflection[i][0] = initial_deflection[i]
+            f_cent[i][0] = 0
+            vert_shear[i][0] = 0
+            bend_moment[i][0] = 0
+            
+            # Calculate forces/deflections at each station
+            for n in range(len(sec_lengths)):
+                
     
     return 0
