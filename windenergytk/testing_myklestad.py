@@ -35,29 +35,35 @@ def influence(n_sections, sec_lengths, ei):
     
     return slope_from_moment, slope_from_shear, deflection_shear
 
-def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density, rpm, 
-                              omega_start, omega_final, omega_step):
+def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density, 
+                              rot_velocity, freq_start, freq_final, freq_step):
     """Estimate the natural freq of a nonuniform vibrating cantilevered beam.
     
     INPUT
     sec_lengths: (array-like) length of each section
-    density: (float) density of material
-    e_i: (array-like) structural stiffness, young's modulus * area inertia
     sec_mass: (array-like) mass of each section
-    rpm: (float) rotations per minute
-    omega_start: (float) starting low guess for natural frequency, rad/s
-    omega_final: (float) high guess fo rnatural frequency, rad/s
-    omega_step: (float) frequency step
+    e_i: (array-like) structural stiffness, young's modulus * area inertia
+    density: (float) density of material
+    rot_velocity: (float) rotational velocity in rad/s
+    freq_start: (float) starting low guess for natural frequency, rad/s
+    freq_final: (float) high guess fo rnatural frequency, rad/s
+    freq_step: (float) frequency step
     
     OUTPUT
-    n_modes: (int) number of natural modes between omega_start and final
-    omega: (array-like) list of natural frequencies
+    nat_frequencies: (array-like) list of natural frequencies
     """
     # MODS
     # No input for number of sections, redundant when there is a list
     # of lengths and masses
     # 
     # No need for Young's modulus if we are given structural stiffness (ei)
-    # for each section
+    # for each section (not even used in VT function)
+    # 
+    # Clarify by using freq_* for oscillating frequency and rot_velocity
+    # for rotational speeds
+    #
+    # Input rotational velocity as rad/s instead of rpm (use external function
+    # to sanitize input)
+    
     
     return 0
