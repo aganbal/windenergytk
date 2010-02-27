@@ -35,17 +35,14 @@ def influence(n_sections, sec_lengths, ei):
     
     return slope_from_moment, slope_from_shear, deflection_shear
 
-def myklestad_beam_vibrations(sec_lengths, young_mod, density, ei, n_sections, 
-                              sec_mass, rpm, omega_start, omega_final, 
-                              omega_step):
+def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density, rpm, 
+                              omega_start, omega_final, omega_step):
     """Estimate the natural freq of a nonuniform vibrating cantilevered beam.
     
     INPUT
     sec_lengths: (array-like) length of each section
-    young_mod: (float) Young's modulus of material (modulus of elasticity)
     density: (float) density of material
-    ei: (array-like) bending stiffness, modulus of elasticity * area moment of inertia
-    n_sections: (int) number of sections
+    e_i: (array-like) structural stiffness, young's modulus * area inertia
     sec_mass: (array-like) mass of each section
     rpm: (float) rotations per minute
     omega_start: (float) starting low guess for natural frequency, rad/s
@@ -56,25 +53,11 @@ def myklestad_beam_vibrations(sec_lengths, young_mod, density, ei, n_sections,
     n_modes: (int) number of natural modes between omega_start and final
     omega: (array-like) list of natural frequencies
     """
-    i, j, slope, deflec, deflec1, omega1 = 0,0,0,0,0,0
-    c_rotate1 = [0,0]
-    c_rotate2 = [0,0]
-    x_from_rotation_axis = np.zeros(n_sections)
+    # MODS
+    # No input for number of sections, redundant when there is a list
+    # of lengths and masses
+    # 
+    # No need for Young's modulus if we are given structural stiffness (ei)
+    # for each section
     
-    y_initial = [1, 0]
-    theta_initial = [0, 1]
-    
-    # turn rpm into rad/s
-    omega_rotate = rpm * np.pi / 60.
-    
-    slope_from_moment, slope_from_shear, \
-    deflection_shear = influence(n_sections, sec_lengths, ei)
-    
-    x_from_rotation_axis[n_sections -1] = sec_lengths[0] / 2.
-    
-    for i in range(n_sections-2, 0, -1):
-        x_from_rotation_axis[i] = x_from_rotation_axis[i+1] + sec_lengths[i]
-    
-    
-        
     return 0
