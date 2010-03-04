@@ -33,6 +33,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
 import numpy as np
+from scipy.constants import g as gravity_constant
 
 def euler_beam_vibrations(beam_length, area_moment, mass_per_length, 
                           elastic_modulus, mode):
@@ -175,13 +176,111 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
     return nat_frequencies
 
 
-def hinge_spring_flapping(number_of_blades, rotor_radius, blade_chord, 
-                          airfoil_lift_curve_slope, blade_pitch_angle, 
-                          nonrotating_natural_freq, rotating_natural_freq, 
-                          blade_mass, blade_offset, rotational_speed, 
-                          tip_speed_ratio, wind_shear_coefficient, 
-                          cross_flow, yaw_rate, air_density):
-    """ """
+
+
+
+def hinge_spring_flapping(num_blades, blade_radius, blade_chord, blade_mass, 
+                          lift_curve_slope, blade_pitch_angle, rot_nat_freq, 
+                          non_nat_freq, yaw_to_blade, yaw_rate, cross_flow, 
+                          linear_shear, air_density, rot_velocity, 
+                          tip_speed_ratio):
+    """Calculate the terms of blade flap displacement based on azimuth angle. 
+    
+    INPUT
+    num_blades: (int) number of blades
+    blade_radius: (float) radius of blades in meters
+    blade_chord: (float) blade average chord
+    blade_mass: (float) mass of blade in kg
+    lift_curve_slope: (float) slope of lift curve; d c_l/d alpha
+    blade_pitch_angle: (float) in radians
+    rot_nat_freq: (float) blade rotating natural flapping frequency
+    non_nat_freq: (float) blade nonrotating natural flapping frequency
+    yaw_to_blade: (float) distance from yaw axis to blade in meters
+    yaw_rate: (float) yaw rate, rad/s
+    cross_flow: (float) cross flow velocity in m/s
+    linear_shear: (float) linear wind shear coefficient
+    air_density: (float) in kg/m**3
+    rot_velocity: (float) rotor speed in rad/s
+    tip_speed_ratio: (float) 
+    
+    OUTPUT
+    beta_0: (float) collective flapping angle, degrees
+    beta_1c: (float) cosine flapping term, vertical tilting term, degrees
+    beta_1s: (float) sine flapping term, yaw or lateral tilting term, degrees    
+    """
+    # Define the terms to be used in flapping matrix
+    # Solidity
+    sigma = num_blades * blade_radius * blade_chord / (np.pi * blade_radius**2)
+    
+    # Reverse blade pitch angle sign
+    blade_pitch_angle = -1. * blade_pitch_angle
+    
+    # Get Hinge Equivalent terms
+    # Find offset, e
+    part_e_1 =  (rot_nat_freq**2 - non_nat_freq**2)/(rot_velocity**2)
+    part_e_2 = 2 * (part_e_1 - 1) / 3.
+    e_offset = part_e_2 / (part_e_2 + 1)
+    
+    # Find moment of inertia 
+    inertia_moment = (blade_mass * blade_radius ** (2./3.)) \
+                                                    * (1 - e_offset) ** 3.
+    # Spring constant
+    spring_constant = (rot_nat_freq ** 2.) * inertia_moment
+    
+    # flapping hinge-offset term
+    flap_offset_term = (3. * e_offset)/ (2. * (1 - e_offset))
+    
+    # Find induced inflow using approximation
+    induced_flow = (1. / tip_speed_ratio) - (lift_curve_slope * 
+                   (1 + 0.6667 * blade_pitch_angle * tip_speed_ratio))/8.
+    
+    # Find Lock Number
+    lock_number = air_density * lift_curve_slope * \
+                  blade_chord * (blade_radius ** 4) / inertia_moment
+    
+    # Find non-dimensional flapping frequency
+    nond_flap_freq = 1 + flap_offset_term + spring_constant / \
+                     (inertia_moment * rot_velocity ** 2)
+    
+    # First axisymmetric flow term
+    axisym_flow = (induced_flow/3.) - (blade_pitch_angle/4.)
+    
+    # Second axisymmetric flow term
+    axisym_flow_3 = (induced_flow/2.) - (2 * blade_pitch_angle / 3.)
+    
+    # Gravity term
+    b_gravity_term = 3. * gravity_constant / \
+    (2. * blade_radius * (1 - e_offset)) / (2. * rot_velocity**2)
+    
+    # Nondimensional crossflow
+    nond_crossflow = cross_flow / (rot_velocity * blade_radius)
+    
+    # Nondimensional yaw rate
+    nond_yaw_rate = yaw_rate / rot_velocity
+    
+    # Nondimensional distance from yaw axis to blade
+    nond_yaw_distance = yaw_to_blade / blade_radius
+    
+    # Nondimensional free stream velocity
+    nond_free_stream = 1. / tip_speed_ratio
+    
+    # Place terms inside the flapping matrices
+    a = np.empty(3, 3)
+    b = np.empty(3, 1)
+    a[0][0] = nond_flap_freq
+    a[0][1] = b_gravity_term
+    a[0][2] = -lock_number * nond_yaw_rate * nond_yaw_distance / 12
+    a[1][0] = 2 * b_gravity_term
+    a[1][1] = nond_flap_freq - 1
+    a[1][2] = lock_number / 8
+    a[2][0] = lock_number * nond_crossflow / 6
+    a[2][1] = -lock_number / 8
+    a[2][2] = nond_flap_freq - 1
+    b[0][0] = lock_number * axisym_flow / 2
+    b[1][0] = -2 * nond_yaw_rate - (lock_number / 2) * \
+              ((nond_crossflow + nond_yaw_rate * nond_yaw_distance) * \
+              axisym_flow_3 + linear_shear * nond_free_stream / 4)
+    b[2][0] = -lock_number * nond_yaw_rate / 8
     return 0
 
 
