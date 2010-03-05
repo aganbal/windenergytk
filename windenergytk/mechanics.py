@@ -34,6 +34,7 @@
 ################################################################################
 import numpy as np
 from scipy.constants import g as gravity_constant
+from copy import deepcopy
 
 def euler_beam_vibrations(beam_length, area_moment, mass_per_length, 
                           elastic_modulus, mode):
@@ -265,8 +266,9 @@ def hinge_spring_flapping(num_blades, blade_radius, blade_chord, blade_mass,
     nond_free_stream = 1. / tip_speed_ratio
     
     # Place terms inside the flapping matrices
-    a = np.empty(3, 3)
-    b = np.empty(3, 1)
+    a = np.empty([3, 3])
+    b = np.empty(3)
+    c = np.empty(3)
     a[0][0] = nond_flap_freq
     a[0][1] = b_gravity_term
     a[0][2] = -lock_number * nond_yaw_rate * nond_yaw_distance / 12
@@ -276,12 +278,20 @@ def hinge_spring_flapping(num_blades, blade_radius, blade_chord, blade_mass,
     a[2][0] = lock_number * nond_crossflow / 6
     a[2][1] = -lock_number / 8
     a[2][2] = nond_flap_freq - 1
-    b[0][0] = lock_number * axisym_flow / 2
-    b[1][0] = -2 * nond_yaw_rate - (lock_number / 2) * \
+    b[0] = lock_number * axisym_flow / 2
+    b[1] = -2 * nond_yaw_rate - (lock_number / 2) * \
               ((nond_crossflow + nond_yaw_rate * nond_yaw_distance) * \
               axisym_flow_3 + linear_shear * nond_free_stream / 4)
-    b[2][0] = -lock_number * nond_yaw_rate / 8
-    return 0
+    b[2] = -lock_number * nond_yaw_rate / 8
+    
+    # Use Cramer's Rule to solve for the matrix equation
+    # A x C = B, where A is 3x3, C is what we want to solve for, B is 3x1
+    for i in range(len(b)):
+        A = deepcopy(a)
+        for j in range(len(A)):
+            A[j][i] = b[j]
+        c[i] = np.linalg.det(A)/np.linalg.det(a)
+    return c[0], c[1], c[2]
 
 
 def rotational_natural_freq(number_of_nodes, list_of_inertias, 
