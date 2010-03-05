@@ -204,7 +204,7 @@ class MechanicsFunctions(unittest.TestCase):
         """Testing mechanics.uniform_beam_vibrations()"""
         test_results = []
         for i in range(1,6):
-            test_results.append(mechanics.uniform_beam_vibrations(self.beam_length, 
+            test_results.append(mechanics.euler_beam_vibrations(self.beam_length, 
                                           self.area_moment_of_inertia, 
                                           self.mass_per_length, 
                                           self.modulus_of_elasticity, i))
@@ -213,7 +213,7 @@ class MechanicsFunctions(unittest.TestCase):
     
     def test_nonuniform_beam(self):
         """Testing mechanics.nonuniform_beam_vibrations()"""
-        test_results = mechanics.nonuniform_beam_vibrations(self.beam_length,
+        test_results = mechanics.myklestad_beam_vibrations(self.beam_length,
                                                             self.area_moment_of_inertia,
                                                             self.mass_per_volume,
                                                             self.modulus_of_elasticity,
@@ -246,7 +246,7 @@ class MechanicsFunctions(unittest.TestCase):
     
     def test_rotating_freq(self):
         """Testing mechanics.rotational_natural_freq()"""
-        test_results = mechanics.rotational_natural_freq(self.number_of_nodes, 
+        test_results = mechanics.holzer_natural_freq(self.number_of_nodes, 
                                                         self.list_of_inertias, 
                                                         self.list_shaft_stiffness, 
                                                         self.start_freq, 

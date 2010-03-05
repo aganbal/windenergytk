@@ -69,7 +69,8 @@ def euler_beam_vibrations(beam_length, area_moment, mass_per_length,
               7.8547574382376126, 10.995540734875467]
     
     # Now we calculate 1/L**2 * Sqrt((E I)/rho)
-    frequency_constant = np.sqrt((elastic_modulus * area_moment) / mass_per_length) / (beam_length**2)
+    frequency_constant = np.sqrt((elastic_modulus * area_moment) / 
+    mass_per_length) / (beam_length**2)
     
     
     # Use correct beta_l for mode
@@ -158,19 +159,32 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
             
             # Calculate forces/deflections at each station
             for n in range(1, n_stations):
-                f_cent[i][n] = f_cent[i][n-1] + freq**2 * sec_masses[n-1] * dist_from_axis[n-1]
+                f_cent[i][n] = f_cent[i][n-1] + freq**2 * sec_masses[n-1] * \
+                dist_from_axis[n-1]
                 
-                vert_shear[i][n] = vert_shear[i][n-1] - freq**2 * sec_masses[n-1] * deflection[i][n-1] - f_cent[i][n] * slope[i][n-1]
+                vert_shear[i][n] = vert_shear[i][n-1] - freq**2 * \
+                sec_masses[n-1] * deflection[i][n-1] - f_cent[i][n] * \
+                slope[i][n-1]
                 
-                bend_moment[i][n] = (bend_moment[i][n-1] - vert_shear[i][n] * (sec_lengths[n-1] - f_cent[i][n] * (sec_lengths[n-1]**3/(3*e_i[n-1]))) + slope[i][n-1]*sec_lengths[n-1]*f_cent[i][n]) / (1 - f_cent[i][n] * sec_lengths[n-1]**2 / (2 * e_i[n-1]))
+                bend_moment[i][n] = (bend_moment[i][n-1] - vert_shear[i][n] * \
+                (sec_lengths[n-1] - f_cent[i][n] * (sec_lengths[n-1]**3/
+                (3*e_i[n-1]))) + slope[i][n-1]*sec_lengths[n-1]*f_cent[i][n]) /\
+                (1 - f_cent[i][n] * sec_lengths[n-1]**2 / (2 * e_i[n-1]))
                 
-                slope[i][n] = slope[i][n-1] + bend_moment[i][n] * (sec_lengths[n-1]/e_i[n-1]) + vert_shear[i][n] * (sec_lengths[n-1]**2/ (2 * e_i[n-1]))
+                slope[i][n] = slope[i][n-1] + bend_moment[i][n] * \
+                (sec_lengths[n-1]/e_i[n-1]) + vert_shear[i][n] * \
+                (sec_lengths[n-1]**2/ (2 * e_i[n-1]))
                 
-                deflection[i][n] = deflection[i][n-1] + slope[i][n-1] * sec_lengths[n-1] + bend_moment[i][n] * (sec_lengths[n-1]**2 / (2 * e_i[n-1])) + vert_shear[i][n] * (sec_lengths[n-1]**3 / (3 * e_i[n-1]))
+                deflection[i][n] = deflection[i][n-1] + slope[i][n-1] * \
+                sec_lengths[n-1] + bend_moment[i][n] * (sec_lengths[n-1]**2 /\
+                (2 * e_i[n-1])) + vert_shear[i][n] * \
+                (sec_lengths[n-1]**3 / (3 * e_i[n-1]))
         
         
         old_composite_deflection = composite_deflection
-        composite_deflection = deflection[0][-1] - deflection[1][-1] * (slope[0][-1]/slope[1][-1])
+        composite_deflection = deflection[0][-1] - deflection[1][-1] * \
+        (slope[0][-1]/slope[1][-1])
+        
         if (np.sign(old_composite_deflection) != np.sign(composite_deflection)) and (freq > freq_start):
             nat_frequencies.append(freq)
         
@@ -294,7 +308,7 @@ def hinge_spring_flapping(num_blades, blade_radius, blade_chord, blade_mass,
     return c[0], c[1], c[2]
 
 
-def rotational_natural_freq(number_of_nodes, list_of_inertias, 
+def holzer_natural_freq(number_of_nodes, list_of_inertias, 
                             list_shaft_stiffness, start_freq, 
                             ending_freq, freq_step):
     """Holzer method to find the natural frequency of a rotating system. """
