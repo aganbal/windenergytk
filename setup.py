@@ -11,7 +11,7 @@ def read(*rnames):
     return open(os.path.join(os.path.dirname(__file__), *rnames)).read()
 
 long_description = (
-    "\n"+read('docs/index.txt')
+    "\n"+read('docs/sphinx/index.rst')
     + '\n'
     + read('CHANGELOG.txt')
     + '\n'
