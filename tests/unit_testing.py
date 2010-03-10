@@ -77,6 +77,10 @@ class AnalysisFunctions(unittest.TestCase):
         """Test analysis.get_histogram_data()"""
         hdata = analysis.get_histogram_data(self.tseries, bins=10, normalized=True)
         numhdata = numpy.histogram(self.tseries, bins=10, normed=True)
+        ## Make sure it integrates to one
+        integral = numpy.sum(hdata[0]*numpy.diff(hdata[1]))
+        self.assertAlmostEqual(integral, 1) 
+        ## Compare to original numpy.histogram
         self.assertEqual(hdata[0].all(), numhdata[0].all())
         self.assertEqual(hdata[1].all(), numhdata[1].all())
     

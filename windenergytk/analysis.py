@@ -76,7 +76,7 @@ def get_histogram_data(timeseries, bins=10, normalized=True):
     Returns histogram data of timeseries object
     Input: timeseries obj.
     Optional: No. of bins (default is 10), normalized (boolean)
-    Output: Tuple (bins, histogram)
+    Output: Tuple (histogram, bin_edges)
     """
     return histogram(timeseries, bins, normed=normalized)
 
