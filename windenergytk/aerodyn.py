@@ -85,6 +85,8 @@ def linear_rotor_analysis(rct_matrix):
         local_power_coefficient: (float)
         
     """
+    ## 1. x
+    
     linear_rotor_stats = \
         {'total_radius': False,
         'tip_loss_factor': False,
@@ -95,7 +97,8 @@ def linear_rotor_analysis(rct_matrix):
         'axial_induction_factor': False,
         'angular_induction_factor': False,
         'local_power_coefficient': False}
-        
+
+
     return linear_rotor_stats
 
 def nonlinear_rotor_analysis(rct_matrix, angle_of_attack, lift_coefficient, 

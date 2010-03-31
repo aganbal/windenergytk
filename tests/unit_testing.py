@@ -53,6 +53,7 @@ class AnalysisFunctions(unittest.TestCase):
         self.data = numpy.random.normal(self.mu, self.sigma, self.size)
         self.tseries = ts.time_series(self.data, start_date = "01-01-2001", freq="T")
 
+        
     def test_dict_stat_values(self):
         """Test analysis.get_statistics() with dictionary output"""
         statistics_dict = analysis.get_statistics(self.tseries)
@@ -96,6 +97,20 @@ class AnalysisFunctions(unittest.TestCase):
         test_c, test_k = analysis.get_weibull_params(stats['mean'],stats['std'])
         self.assertAlmostEqual(k, test_k, 1)
         self.assertAlmostEqual(c, test_c, 1)
+    
+    def test_psd(self):
+        """Testing analysis.power_spectral_density()"""
+        ## Create cosine wave data, 10 cycles
+        freq = 10                   ## 10 cosine waves per unit time
+        t = numpy.arange(0.,1.,.01) ## Array of one unit time measured in .01
+        ## Array of 10 cosine cycles
+        cos_data = numpy.cos(2. * numpy.pi * freq * t)
+        pxx, freq_list = analysis.power_spectral_density(cos_data, 100)
+        max_value_index = pxx.argmax()
+        ## Assert that the highest density is at the cosine peak freq
+        self.assertAlmostEqual(freq_list[max_value_index], 10, 0)
+        
+        
 
 class SynthesisFunctions(unittest.TestCase):
     """Tests for the synthesis functions."""
@@ -160,7 +175,7 @@ class RotoraeroFunctions(unittest.TestCase):
     def test_linear(self):
         """Testing aerodyn.linear_rotor_analysis()"""
         linear_stats = aerodyn.linear_rotor_analysis(self.rct_matrix)
-        self.assertAlmostEqual(linear_stats['total_radius'], self.rotor_stats['total_radius'])
+        self.assertAlmostEqual(linear_stats['total_radius'], self.rotor_stats['total_radius'],1)
         self.assertAlmostEqual(linear_stats['tip_loss_factor'], self.rotor_stats['tip_loss_factor'])
         self.assertAlmostEqual(linear_stats['angle_of_attack'], self.rotor_stats['angle_of_attack'])
         self.assertAlmostEqual(linear_stats['angle_of_rwind'], self.rotor_stats['angle_of_rwind'])

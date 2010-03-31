@@ -33,9 +33,6 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
 
-
-
-
 from numpy import histogram
 from numpy import mean as npmean
 import scikits.timeseries as ts
@@ -179,6 +176,8 @@ def block_average(timeseries, new_freq=''):
     return ts.time_series(averages,dates=timesteps)
 
 
-def power_spectral_density(data_array, frequency, window_method=False):
-    return psd(data_array, Fs = frequency)
+def power_spectral_density(data_array, frequency, segment_size=256, window_method=False):
+    """Return the power spectral density using matplotlib.pyplot.psd function."""
+    return psd(data_array, NFFT=segment_size, Fs = frequency)
+
 
