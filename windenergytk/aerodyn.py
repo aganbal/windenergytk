@@ -74,6 +74,10 @@ def q_terms(local_pitch, local_tsr, lift_coef_slope, lift_coef_intercept,
     return q1, q2, q3
 
 
+def calc_attack_angle():
+    """
+    """
+
 
 def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
                   total_radius, hub_radius, number_blades, sections):
@@ -168,8 +172,8 @@ def linear_rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
             q1, q2, q3 = q_terms()
         
             ## Calculate stats
-            angle_of_rwind = relative_wind()
             angle_of_attack = calc_attack_angle()
+            angle_of_rwind = local_pitch + angle_of_attack
             lift_coefficient = calc_lift_coef()
             axial_induction_factor = calc_axial_factor()
             angular_induction_factor = calc_angular_factor()
