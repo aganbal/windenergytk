@@ -74,10 +74,31 @@ def q_terms(local_pitch, local_tsr, lift_coef_slope, lift_coef_intercept,
     return q1, q2, q3
 
 
-def calc_attack_angle():
-    """
-    """
+def calc_attack_angle(q1, q2, q3):
+    """Calculate angle of attack for linear/small angle approximation.
 
+    INPUT
+    
+    OUTPUT
+    angle_of_attack: (float) local angle of attack in radians
+    """
+    return -(numpy.sqrt(q2 ** 2 - 4 * q1 * q3) - q2) / (2 * q1)
+
+
+def calc_axial_factor(local_tip_loss, lift_coefficient, angle_of_rwind,
+                      local_solidity):
+    
+    return 1 / (1 + (4 * local_tip_loss * (numpy.sin(angle_of_rwind) ** 2) /
+                     (local_solidity * lift_coefficient *
+                      numpy.cos(angle_of_rwind))))
+    
+
+def calc_angular_factor(axial_induc_factor, angle_of_rwind, local_tsr):
+    
+    return axial_induc_factor * numpy.tan(angle_of_rwind) / local_tsr
+
+def tip_loss():
+    return 0
 
 def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
                   total_radius, hub_radius, number_blades, sections):
@@ -112,7 +133,8 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
 
 def linear_rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
                           blade_radius, hub_radius, lift_coef_slope,
-                          lift_coef_intercept):
+                          lift_coef_intercept, drag_coef_slope,
+                          drag_coef_intercept):
     """Uses a linear approx. of lift curve to estimate turbine rotor performance.
     
     INPUT
@@ -169,30 +191,35 @@ def linear_rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
         while tip_loss_epsilon > 0.01:
 
             ## Calculate q terms
-            q1, q2, q3 = q_terms()
+            q1, q2, q3 = q_terms(local_pitch, local_tsr, lift_coef_slope,
+                                 lift_coef_intercept, local_solidity)
         
             ## Calculate stats
-            angle_of_attack = calc_attack_angle()
+            angle_of_attack = calc_attack_angle(q1, q2, q3)
             angle_of_rwind = local_pitch + angle_of_attack
-            lift_coefficient = calc_lift_coef()
-            axial_induction_factor = calc_axial_factor()
-            angular_induction_factor = calc_angular_factor()
-            drag_coefficient = calc_drag_coef()
+            lift_coefficient = (angle_of_attack *
+                                lift_coef_slope) + lift_coef_intercept
+            axial_induc_factor = calc_axial_factor(local_tip_loss,
+                                                   lift_coefficient,
+                                                   angle_of_rwind,
+                                                   local_solidity)
+
+            angular_induc_factor = calc_angular_factor(axial_induc_factor,
+                                                           angle_of_rwind,
+                                                           local_tsr)
+            drag_coefficient = (drag_coef_slope *
+                                angle_of_attack) + drag_coef_intercept
 
             ## Calculate new tip loss
-            old_tip_loss = local_tip_loss
+            old_local_tip_loss = local_tip_loss
             local_tip_loss = tip_loss()
             tip_loss_epsilon = abs(local_tip_loss - old_local_tip_loss)
         
 
         ## Add stats to results
-        linear_rotor_stats.append([angle_of_rwind,
-                                      angle_of_attack,
-                                      lift_coefficient,
-                                      axial_induction_factor,
-                                      angular_induction_factor,
-                                      tip_loss_factor])
-
+        linear_rotor_stats.append([angle_of_rwind, angle_of_attack,
+                                   lift_coefficient, axial_induc_factor,
+                                   angular_induc_factor, local_tip_loss])
 
     ## Convert back to degrees
     
