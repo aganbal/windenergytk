@@ -39,6 +39,7 @@ from math import pi
 
 
 ## BEGIN HELPER FUNCTIONS
+
 def q_terms(local_pitch, local_tsr, lift_coef_slope, lift_coef_intercept,
             local_solidity):
     """Create the q terms used in simplified angle of attack calculation.
