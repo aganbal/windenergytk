@@ -38,8 +38,6 @@ from math import pi
 
 
 
-## BEGIN HELPER FUNCTIONS
-
 def q_terms(local_pitch, local_tsr, lift_coef_slope, lift_coef_intercept,
             local_solidity):
     """Create the q terms used in simplified angle of attack calculation.
@@ -165,11 +163,68 @@ def rotor_coefs(axial_induc_factor, angular_induc_factor, angle_of_rwind,
     local_torque_coef = local_power_coef / local_tsr
     
     return local_thrust_coef, local_torque_coef, local_power_coef
-## END HELPER FUNCTIONS
 
+def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
+                          lift_coef_slope, lift_coef_intercept, drag_coef_slope,
+                          drag_coef_intercept, local_solidity):
+    """Get angle of attack, relative wind, induction factors using linear curve.
 
+    INPUT
+    fradius:            (float) fractional radius of station
+    number_blades:      (int) number of blades
+    local_pitch:        (float) local pitch in radians
+    local_tsr:          (float) local tip speed ratio
+    lift_coef_slope:    (float) slope of linear lift coef vs. angle of attack
+    lift_coef_intercept:(float) intercept of linear lift coef vs. AoA curve
+    drag_coef_slope:    (float) same as lift 
+    drag_coef_intercept:(float) same as lift
+    local_solidity:     (float) local solidity
+    
+    OUTPUT
+    local_tip_loss: (float)
+    angle_of_attack: (float)
+    angle_of_rwind: (float)
+    lift_coefficient: (float)
+    drag_coefficient: (float)
+    axial_induc_factor: (float)
+    angular_induc_factor: (float
+    """
+    local_tip_loss = 1
+    tip_loss_epsilon = 1
+    while tip_loss_epsilon > 0.01:
+        
+        ## Calculate q terms
+        q1, q2, q3 = q_terms(local_pitch, local_tsr, lift_coef_slope,
+                             lift_coef_intercept, local_solidity)
+        
+        ## Calculate stats
+        angle_of_attack = calc_attack_angle(q1, q2, q3)
+        angle_of_rwind = local_pitch + angle_of_attack
+        lift_coefficient = (angle_of_attack *
+                            lift_coef_slope) + lift_coef_intercept
+        axial_induc_factor = calc_axial_factor(local_tip_loss,
+                                               lift_coefficient,
+                                               angle_of_rwind,
+                                               local_solidity)
+        
+        angular_induc_factor = calc_angular_factor(axial_induc_factor,
+                                                   angle_of_rwind,
+                                                   local_tsr)
+        drag_coefficient = (drag_coef_slope *
+                            angle_of_attack) + drag_coef_intercept
+        
+        ## Calculate new tip loss
+        old_local_tip_loss = local_tip_loss
+        local_tip_loss = tip_loss(number_blades, fradius,angle_of_rwind)
+        tip_loss_epsilon = abs(local_tip_loss - old_local_tip_loss)
 
-## BEGIN MAIN FUNCTIONS
+    return local_tip_loss, angle_of_attack, angle_of_rwind, lift_coefficient,\
+           drag_coefficient, axial_induc_factor, angular_induc_factor
+
+def nonlinear_method_factors():
+    return stuff
+
+        
 def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
                   total_radius, hub_radius, number_blades, sections):
     """Return blade station, chord, and twist for a given turbine.
@@ -201,11 +256,9 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
     return sct_matrix
 
 
-def linear_rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
-                          blade_radius, hub_radius, lift_coef_slope,
-                          lift_coef_intercept, drag_coef_slope,
-                          drag_coef_intercept):
-    """Uses a linear approx. of lift curve to estimate turbine rotor performance.
+def rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
+                   blade_radius, hub_radius, lift_curve, drag_curve, method):
+    """Returns performance statistics of a rotor.
     
     INPUT
     tip_speed_ratio: (float) The tip speed ratio
@@ -213,9 +266,12 @@ def linear_rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
     pitch_0 :        (float) initial pitch angle relative to tip, deg
     blade_radius:          (float) radius in meters
     hub_radius:      (float) hub radius in meters
-    lift_coef_slope: (float) slope of linear lift coefficient vs. AoA
-    lift_coef_intercept: (float) intercept of linear coefficient vs. AoA line
-    drag_coef_slope: (float) slope of 
+    lift_curve:       (array-like) either linear slope and intercept or
+                                  emperical C_l vs. AoA points
+    drag_curve:       (array-like) either linear slope and intercept or
+                                  emperical C_d vs. C_l points
+    
+
     
     rct_matrix: (numpy.ndarray) 3 x n array of fradius, chord, twist on each line
         fradius: fractional radius along blade
@@ -223,131 +279,72 @@ def linear_rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
         twist: (float)
 
     OUTPUT
-    linear_rotor_stats: (ndarray) 6 x n, of the following
+    rotor_stats: (ndarray) 7 x n, of the following
         angle_of_attack: (float) estimated angle of attack in degrees
         angle_of_rwind: (float) estimated angle of relative wind in degrees
-        lift_coefficient: (float) linear approximation of lift coefficient
-        drag_coefficient: (float) linear approximation of drag coefficient
-        axial_induction_factor: (float)
-        angular_induction_factor: (float)
-        tip_loss_factor: (float) 
+        lift_coef: (float) linear approximation of lift coefficient
+        drag_coef: (float) linear approximation of drag coefficient
+        axial_induc_factor: (float)
+        angular_induc_factor: (float)
+        tip_loss_factor: (float)
+        local_power_coef: (float) local power coefficient
 
-    power_coefficient: (float)
-        
     """
     ## Convert all degrees to radians
     
-    
-    linear_rotor_stats = []
-    total_power_coefficient = 0
+    rotor_stats = []
     ## Loop over each station
     for j in range(len(rct_matrix)):
-        ## local radius
+        ## Calculate method-independent station characteristics
         local_radius = rct_matrix[j][0] * blade_radius
         
-        ## local chord
         local_chord = rct_matrix[j][1]
         
-        ## local tip speed ratio
         local_tsr = tip_speed_ratio * rct_matrix[j][0]
 
-        ## local solidity
         local_solidity = number_blades * local_chord / (2 * numpy.pi *
                                                        local_radius) 
-        ## local pitch
         local_pitch = rct_matrix[j][2] + pitch_0
-        
-        local_tip_loss = 1
-        tip_loss_epsilon = 1
-        while tip_loss_epsilon > 0.01:
 
-            ## Calculate q terms
-            q1, q2, q3 = q_terms(local_pitch, local_tsr, lift_coef_slope,
-                                 lift_coef_intercept, local_solidity)
-        
-            ## Calculate stats
-            angle_of_attack = calc_attack_angle(q1, q2, q3)
-            angle_of_rwind = local_pitch + angle_of_attack
-            lift_coefficient = (angle_of_attack *
-                                lift_coef_slope) + lift_coef_intercept
-            axial_induc_factor = calc_axial_factor(local_tip_loss,
-                                                   lift_coefficient,
-                                                   angle_of_rwind,
-                                                   local_solidity)
-
-            angular_induc_factor = calc_angular_factor(axial_induc_factor,
-                                                       angle_of_rwind,
-                                                       local_tsr)
-            drag_coefficient = (drag_coef_slope *
-                                angle_of_attack) + drag_coef_intercept
-
-            ## Calculate new tip loss
-            old_local_tip_loss = local_tip_loss
-            local_tip_loss = tip_loss(number_blades, rct_matrix[j][0], angle_of_rwind)
-            tip_loss_epsilon = abs(local_tip_loss - old_local_tip_loss)
-        
-        ## Calculate local thrust, torque, and power coefficients 
-        local_thrust, local_torque, local_power = \
+        ## Calculate method dependent characteristics
+        if method == "linear":
+            (local_tip_loss, angle_of_attack, angle_of_rwind, lift_coef,
+            drag_coef, axial_induc_factor, angular_induc_factor) =\
+                       linear_method_factors(rct_matrix[j][0], number_blades,
+                                             local_pitch, local_tsr,
+                                             lift_curve[0], lift_curve[1],
+                                             drag_curve[0], drag_curve[1],
+                                             local_solidity)
+        else:
+            (local_tip_loss, angle_of_attack, angle_of_rwind, lift_coef,
+            drag_coef, axial_induc_factor, angular_induc_factor) = \
+                       nonlinear_method_factors(local_pitch, local_tsr,
+                                                lift_curve, drag_curve,
+                                                local_solidity)
+            
+                
+        ## Calculate local thrust, torque, and power coefficients
+        ## from method dependent results
+        local_thrust, local_torque, local_power_coef = \
             rotor_coefs(axial_induc_factor,angular_induc_factor, 
                         angle_of_rwind, tip_speed_ratio, local_tsr, 
-                        len(rct_matrix), local_solidity, lift_coefficient, 
-                        drag_coefficient, local_tip_loss)
+                        len(rct_matrix), local_solidity, lift_coef, 
+                        drag_coef, local_tip_loss)
 
-        ## Add station's contribution to Power coefficient
-        total_power_coefficient += local_power
+
             
         ## Add stats to results
-        linear_rotor_stats.append([local_radius, local_tip_loss, 
+        rotor_stats.append([local_radius, local_tip_loss, 
                                    angle_of_attack, angle_of_rwind, 
-                                   lift_coefficient, drag_coefficient, 
+                                   lift_coef, drag_coef, 
                                    axial_induc_factor, angular_induc_factor,
-                                   local_power])
+                                   local_power_coef])
 
     ## Convert back to degrees
     
-    return linear_rotor_stats
+    return rotor_stats
 
 
-
-def nonlinear_rotor_analysis(rct_matrix, angle_of_attack, lift_coefficient, 
-                             drag_coefficient):
-    """Analyze wind turbine rotor using non-linear curves for lift and drag.
-    
-    INPUT
-    rct_matrix: (numpy.ndarray) 3 x n array of fradius, chord, twist on each line
-        fradius: fractional radius along blade
-        chord: (float)
-        twist: (float)
-    angle_of_attack: (float) angle of attack
-    lift_coefficient: (float) lift coefficient for rotor
-    drag_coefficient: (float) drag coefficient for rotor
-    
-    OUTPUT
-    nonlinear_rotor_stats: (dict) with the following keys
-        total_radius: (float) optimal radius of rotor in meters
-        tip_loss_factor: (float) 
-        angle_of_attack: (float) estimated angle of attack in degrees
-        angle_of_rwind: (float) estimated angle of relative wind in degrees
-        lift_coefficient: (float) linear approximation of lift coefficient
-        drag_coefficient: (float) linear approximation of drag coefficient
-        axial_induction_factor: (float)
-        angular_induction_factor: (float)
-        local_power_coefficient: (float)
-    
-    """
-    
-    nonlinear_rotor_stats = \
-        {'total_radius': False,
-        'tip_loss_factor': False,
-        'angle_of_attack': False,
-        'angle_of_rwind': False,
-        'lift_coefficient': False,
-        'drag_coefficient': False,
-        'axial_induction_factor': False,
-        'angular_induction_factor': False,
-        'local_power_coefficient': False}
-        
-    return nonlinear_rotor_stats
 ## END MAIN FUNCTIONS
 
 if __name__ == "__main__":
