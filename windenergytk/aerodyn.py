@@ -34,6 +34,7 @@
 ################################################################################
 
 from numpy import arctan, sin
+from scipy.interpolate import interp1d
 from math import pi
 
 
@@ -215,14 +216,55 @@ def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
         
         ## Calculate new tip loss
         old_local_tip_loss = local_tip_loss
-        local_tip_loss = tip_loss(number_blades, fradius,angle_of_rwind)
+        local_tip_loss = tip_loss(number_blades, fradius, angle_of_rwind)
         tip_loss_epsilon = abs(local_tip_loss - old_local_tip_loss)
 
     return local_tip_loss, angle_of_attack, angle_of_rwind, lift_coefficient,\
            drag_coefficient, axial_induc_factor, angular_induc_factor
 
-def nonlinear_method_factors():
-    return stuff
+def nonlinear_method_factors(fradius, number_blades, local_pitch, local_tsr,
+                             lift_curve, drag_curve, local_solidity):
+    """
+    """
+    lift_coef_epsilon = 1.
+    angle_of_attack = 0.
+
+    ## Transpose curves to make interpolation easier
+    lift_curve = numpy.array(lift_curve).transpose()
+    drag_curve = numpy.array(drag_curve).transpose()
+    
+    ## Find where empirical and Blade Element Momentum Theory
+    ## lift coef vs. angle of attack curves meet
+    while lift_coef_epsilon < 0.01:
+        
+        angle_of_rwind = local_pitch + angle_of_attack
+        local_tip_loss = tip_loss(number_blades, fradius, angle_of_rwind)
+
+        ## Use input lift coef vs. angle of attack
+        interp_lift_curve = interp1d(lift_curve[0],lift_curve[1])
+        empirical_lift_coef = interp_lift_curve(angle_of_attack)
+        
+        ## From 3.10.1.3 Manwell et. al.
+        bemt_lift_coef = ((local_tip_loss / local_solidity) * 4 *
+                          numpy.sin(angle_of_rwind) *
+                          ((numpy.cos(angle_of_rwind) -
+                            local_tsr * numpy.sin(angle_of_rwind)) /
+                           (numpy.sin(angle_of_rwind) + local_tsr *
+                            numpy.cos(angle_of_rwind))))
+
+        ## Calculate axial induction factor
+        axial_induction_factor = calc_axial_factor(local_tip_loss,
+                                                   empirical_lift_coef,
+                                                   angle_of_rwind,
+                                                   local_solidity)
+
+        
+
+
+
+        
+    return local_tip_loss, angle_of_attack, angle_of_rwind, lift_coefficient,\
+           drag_coefficient, axial_induc_factor, angular_induc_factor
 
         
 def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
