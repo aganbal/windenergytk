@@ -355,9 +355,9 @@ def rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
 
     
     rct_matrix: (numpy.ndarray) 3 x n array of fradius, chord, twist on each line
-        fradius: fractional radius along blade
-        chord: (float)
-        twist: (float)
+        fradius: (float) nondimensional fractional radius along blade
+        chord:   (float) nondimensional length
+        twist:   (float) in degrees
 
     OUTPUT
     rotor_stats: (ndarray) 7 x n, of the following
@@ -372,6 +372,9 @@ def rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
 
     """
     ## Convert all degrees to radians
+    
+
+
     
     rotor_stats = []
     ## Loop over each station
