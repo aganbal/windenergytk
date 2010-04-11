@@ -33,7 +33,7 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.     #
 ################################################################################
 
-from numpy import arctan, sin
+import numpy
 from scipy.interpolate import interp1d
 from math import pi
 
@@ -224,10 +224,34 @@ def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
 
 def nonlinear_method_factors(fradius, number_blades, local_pitch, local_tsr,
                              lift_curve, drag_curve, local_solidity):
+    """Get angle of attack, relative wind, induction factors w/ nonlinear curve.
+
+    INPUT
+    fradius:            (float) fractional radius of station
+    number_blades:      (int) number of blades
+    local_pitch:        (float) local pitch in radians
+    local_tsr:          (float) local tip speed ratio
+    lift_curve:         (float) array of empirical lift_coef vs. AoA curve
+    drag_curve:         (float) array of empirical drag_coef vs. AoA curve
+    local_solidity:     (float) local solidity
+    
+    OUTPUT
+    local_tip_loss: (float)
+    angle_of_attack: (float)
+    angle_of_rwind: (float)
+    lift_coefficient: (float)
+    drag_coefficient: (float)
+    axial_induc_factor: (float)
+    angular_induc_factor: (float
     """
-    """
-    lift_coef_epsilon = 1.
+    ## TODO
+    ## Remove all by necessary calculations from loop
+
+    lift_coef_epsilon = 10.
     angle_of_attack = 0.
+    
+    ## increment of "1 deg" in radians for changing AoA
+    angle_delta = 0.0174532925
 
     ## Transpose curves to make interpolation easier
     lift_curve = numpy.array(lift_curve).transpose()
@@ -235,14 +259,14 @@ def nonlinear_method_factors(fradius, number_blades, local_pitch, local_tsr,
     
     ## Find where empirical and Blade Element Momentum Theory
     ## lift coef vs. angle of attack curves meet
-    while lift_coef_epsilon < 0.01:
+    while (lift_coef_epsilon > 0.01) and angle_delta > 0.001:
         
         angle_of_rwind = local_pitch + angle_of_attack
         local_tip_loss = tip_loss(number_blades, fradius, angle_of_rwind)
 
         ## Use input lift coef vs. angle of attack
         interp_lift_curve = interp1d(lift_curve[0],lift_curve[1])
-        empirical_lift_coef = interp_lift_curve(angle_of_attack)
+        empirical_lift_coef = float(interp_lift_curve(angle_of_attack))
         
         ## From 3.10.1.3 Manwell et. al.
         bemt_lift_coef = ((local_tip_loss / local_solidity) * 4 *
@@ -253,17 +277,32 @@ def nonlinear_method_factors(fradius, number_blades, local_pitch, local_tsr,
                             numpy.cos(angle_of_rwind))))
 
         ## Calculate axial induction factor
-        axial_induction_factor = calc_axial_factor(local_tip_loss,
+        axial_induc_factor = calc_axial_factor(local_tip_loss,
                                                    empirical_lift_coef,
                                                    angle_of_rwind,
                                                    local_solidity)
+        ## Calculate angular induction factor
+        angular_induc_factor = calc_angular_factor(axial_induc_factor,
+                                                      angle_of_rwind, local_tsr)
 
-        
+        ## Calculate difference between points on two lines
+        old_lift_coef_epsilon = lift_coef_epsilon
+        lift_coef_epsilon = abs(empirical_lift_coef - bemt_lift_coef)
 
+        ## if solution is approaching, keep incrementing AoA
+        if lift_coef_epsilon < old_lift_coef_epsilon:
+            angle_of_attack += angle_delta
+        ## otherwise we've gone too far. Go back and make increment smaller
+        else:
+            angle_of_attack -= angle_delta
+            angle_delta = .707 * angle_delta
+            angle_of_attack += angle_delta
 
+            
+    interp_drag_curve = interp1d(drag_curve[0],drag_curve[1])
+    drag_coefficient = float(interp_drag_curve(angle_of_attack))
 
-        
-    return local_tip_loss, angle_of_attack, angle_of_rwind, lift_coefficient,\
+    return local_tip_loss, angle_of_attack, angle_of_rwind, empirical_lift_coef,\
            drag_coefficient, axial_induc_factor, angular_induc_factor
 
         
@@ -290,8 +329,8 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
     
     for r in range(sections):
         ## Calculate twist and chord for each section
-        twist = arctan(2./(3.*tip_speed_ratio[r])) ## partial tip speed ratio ?
-        chord = (8. * pi * r * sin(twist))/ (3. * number_blades *
+        twist = numpy.arctan(2./(3.*tip_speed_ratio[r])) ## partial tip speed ratio ?
+        chord = (8. * pi * r * numpy.sin(twist))/ (3. * number_blades *
                                              lift_coefficient *
                                              tip_speed_ratio[r])
         sct_matrix.append([r, twist, chord])
@@ -360,7 +399,8 @@ def rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
         else:
             (local_tip_loss, angle_of_attack, angle_of_rwind, lift_coef,
             drag_coef, axial_induc_factor, angular_induc_factor) = \
-                       nonlinear_method_factors(local_pitch, local_tsr,
+                       nonlinear_method_factors(rct_matrix[j][0], number_blades,
+                                                local_pitch, local_tsr,
                                                 lift_curve, drag_curve,
                                                 local_solidity)
             
@@ -387,7 +427,5 @@ def rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
     return rotor_stats
 
 
-## END MAIN FUNCTIONS
-
-if __name__ == "__main__":
-    print "HI"
+## For Testing
+## rotor_analysis([[.2,2.,.3],[.4,2.,.4],[.6,2.,.5],[.8,2.,.6],[.9,2,.6],[.9,2.,.6]], 10., 3, .1, 10., 1., [[0.,0.],[1.,30],[1.5,40]],[[0.,0.],[1.,30],[1.5,40]], "nonlinear")
