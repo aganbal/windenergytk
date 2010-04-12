@@ -113,7 +113,7 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
     # of lengths and masses
     # 
     # No need for Young's modulus if we are given structural stiffness (ei)
-    # for each section (not even used in VT function)
+    # for each section (not even used in VB function)
     # 
     # Clarify by using freq_* for oscillating frequency and rot_velocity
     # for rotational speeds
@@ -121,7 +121,7 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
     # Input rotational velocity as rad/s instead of rpm (use external function
     # to sanitize input)
     
-    # 1. Setup prior to main algorithm
+    # Setup prior to main algorithm
     
     # calculate number of stations
     n_stations = len(sec_lengths)
@@ -146,7 +146,8 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
     initial_deflection = [1, 0]
     
     composite_deflection = 1
-    
+
+    # Begin main algorithm
     # Iterate through range of possible natural frequencies
     for freq in np.arange(freq_start, freq_final, freq_step):
         # Calculate two sets of deflec/slope for linear combination
@@ -184,7 +185,8 @@ def myklestad_beam_vibrations(sec_lengths, sec_masses, e_i, density,
         old_composite_deflection = composite_deflection
         composite_deflection = deflection[0][-1] - deflection[1][-1] * \
         (slope[0][-1]/slope[1][-1])
-        
+
+        ## Add to natural frequencies if we recently passed through a solution
         if (np.sign(old_composite_deflection) != np.sign(composite_deflection)) and (freq > freq_start):
             nat_frequencies.append(freq)
         

@@ -35,11 +35,9 @@
 
 import numpy
 from scipy.interpolate import interp1d
-from math import pi
 
 
-
-def q_terms(local_pitch, local_tsr, lift_coef_slope, lift_coef_intercept,
+def q_terms(local_pitch, local_tip_loss, lift_coef_slope, lift_coef_intercept,
             local_solidity):
     """Create the q terms used in simplified angle of attack calculation.
 
@@ -59,18 +57,18 @@ def q_terms(local_pitch, local_tsr, lift_coef_slope, lift_coef_intercept,
     q3: (float)
     
     """
-    d1 = numpy.cos(local_pitch) - local_tsr * numpy.sin(local_pitch)
-    d2 = numpy.sin(local_pitch) + local_tsr * numpy.cos(local_pitch)
+    d1 = numpy.cos(local_pitch) - local_tip_loss * numpy.sin(local_pitch)
+    d2 = numpy.sin(local_pitch) + local_tip_loss * numpy.cos(local_pitch)
     
-    q1 = (d1 * lift_coef_slope) + ((4 * local_tsr / local_solidity) *
+    q1 = (d1 * lift_coef_slope) + ((4 * local_tip_loss / local_solidity) *
                                           numpy.cos(local_pitch) * d2)
     
     q2 = d2 * lift_coef_slope + (d1 * lift_coef_intercept -
-                                 (4 * local_tsr / local_solidity) *
+                                 (4 * local_tip_loss / local_solidity) *
                                  (d1 * numpy.cos(local_pitch) - d2 *
                                   numpy.sin(local_pitch)))
     
-    q3 = d2 * lift_coef_intercept - ((4 * local_tsr / local_solidity) *
+    q3 = d2 * lift_coef_intercept - ((4 * local_tip_loss / local_solidity) *
                                      d1 * numpy.sin(local_pitch))
     
     return q1, q2, q3
@@ -195,8 +193,11 @@ def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
     while tip_loss_epsilon > 0.01:
         
         ## Calculate q terms
-        q1, q2, q3 = q_terms(local_pitch, local_tsr, lift_coef_slope,
+        q1, q2, q3 = q_terms(local_pitch, local_tip_loss, lift_coef_slope,
                              lift_coef_intercept, local_solidity)
+
+        ## test
+        print q1
         
         ## Calculate stats
         angle_of_attack = calc_attack_angle(q1, q2, q3)
@@ -219,6 +220,9 @@ def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
         local_tip_loss = tip_loss(number_blades, fradius, angle_of_rwind)
         tip_loss_epsilon = abs(local_tip_loss - old_local_tip_loss)
 
+        ## test
+        ## print tip_loss_epsilon
+        
     return local_tip_loss, angle_of_attack, angle_of_rwind, lift_coefficient,\
            drag_coefficient, axial_induc_factor, angular_induc_factor
 
@@ -242,10 +246,10 @@ def nonlinear_method_factors(fradius, number_blades, local_pitch, local_tsr,
     lift_coefficient: (float)
     drag_coefficient: (float)
     axial_induc_factor: (float)
-    angular_induc_factor: (float
+    angular_induc_factor: (float)
     """
     ## TODO
-    ## Remove all by necessary calculations from loop
+    ## Remove all but necessary calculations from loop
 
     lift_coef_epsilon = 10.
     angle_of_attack = 0.
@@ -254,12 +258,14 @@ def nonlinear_method_factors(fradius, number_blades, local_pitch, local_tsr,
     angle_delta = 0.0174532925
 
     ## Transpose curves to make interpolation easier
+    ## Going from [[AoA, lift_coef]..] to
+    ## [[AoA, AoA2...],[lift_coef, lift_coef2]]
     lift_curve = numpy.array(lift_curve).transpose()
     drag_curve = numpy.array(drag_curve).transpose()
     
     ## Find where empirical and Blade Element Momentum Theory
     ## lift coef vs. angle of attack curves meet
-    while (lift_coef_epsilon > 0.01) and angle_delta > 0.001:
+    while (lift_coef_epsilon > 0.01) and (angle_delta > 0.001):
         
         angle_of_rwind = local_pitch + angle_of_attack
         local_tip_loss = tip_loss(number_blades, fradius, angle_of_rwind)
@@ -330,7 +336,7 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
     for r in range(sections):
         ## Calculate twist and chord for each section
         twist = numpy.arctan(2./(3.*tip_speed_ratio[r])) ## partial tip speed ratio ?
-        chord = (8. * pi * r * numpy.sin(twist))/ (3. * number_blades *
+        chord = (8. * numpy.pi * r * numpy.sin(twist))/ (3. * number_blades *
                                              lift_coefficient *
                                              tip_speed_ratio[r])
         sct_matrix.append([r, twist, chord])
