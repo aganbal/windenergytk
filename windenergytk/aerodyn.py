@@ -196,9 +196,7 @@ def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
         q1, q2, q3 = q_terms(local_pitch, local_tip_loss, lift_coef_slope,
                              lift_coef_intercept, local_solidity)
 
-        ## test
-        print q1
-        
+                
         ## Calculate stats
         angle_of_attack = calc_attack_angle(q1, q2, q3)
         angle_of_rwind = local_pitch + angle_of_attack
@@ -220,8 +218,7 @@ def linear_method_factors(fradius, number_blades, local_pitch, local_tsr,
         local_tip_loss = tip_loss(number_blades, fradius, angle_of_rwind)
         tip_loss_epsilon = abs(local_tip_loss - old_local_tip_loss)
 
-        ## test
-        ## print tip_loss_epsilon
+        
         
     return local_tip_loss, angle_of_attack, angle_of_rwind, lift_coefficient,\
            drag_coefficient, axial_induc_factor, angular_induc_factor
