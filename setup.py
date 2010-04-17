@@ -40,7 +40,7 @@ setup(
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     include_package_data=True,
     zip_safe=False,
-    install_requires=["numpy>=1.3,<=1.3.99","scikits.timeseries","scipy.special","matplotlib","wxpython","wxmpl"
+    install_requires=["numpy>=1.3,<=1.3.99","scikits.timeseries","scipy","matplotlib","wxpython","wxmpl"
     ],
     entry_points="""
     """,

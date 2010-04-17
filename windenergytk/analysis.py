@@ -40,15 +40,6 @@ from scipy.special import gamma
 from matplotlib.pyplot import psd
 
 
-# Core Functions #####################################################
-#      Statistics
-#      Histogram 
-#      Weibull parameters 
-#      Autocorrelation
-#      Crosscorrelation 
-#      Block Average
-#      Power Spectral Density
-
 def get_statistics(timeseries, output='dictionary'):
     """
     Collects statistics from a timeseries object.
