@@ -51,7 +51,7 @@ def q_terms(local_pitch, local_tip_loss, lift_coef_slope, lift_coef_intercept,
     local_solidity: (float)
     
     OUTPUT
-    These terms are used in linear approximation of \alpha calculation
+    These terms are used in linear approximation of alpha calculation
     q1: (float) 
     q2: (float)
     q3: (float)
@@ -322,8 +322,8 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
     sections: (int) number of sections to divide blade length into
     
     OUTPUT
-    rotor_design: (numpy.ndarray) 3 x sections array with station, chord, twist
-        station: (float) distance from hub in meters
+    rotor_design: (numpy.ndarray) sections x 3 array with station, chord, twist
+        station: (float) fractional distance of blade section
         chord: (float)
         twist: (float)
     

@@ -184,7 +184,7 @@ def add_diurnal(tseries, sine_period, peak_mag):
 # Generate power density function (pdf) to create synthetic TPM from
 # mean, stdev, autocorr, npointsx
 
-def gen_pdf(desired_mean, desired_stdev, bin_width):
+# def gen_pdf(desired_mean, desired_stdev, bin_width):
     ## TODO
     return 0
 ## Essentially this is the reverse of the histogram

@@ -55,8 +55,8 @@ def sanitize(a_string):
 
 
 def parse_file(dat_file):
-    """
-    Return meta and timeseries objects from WEC dat file.
+    """Return meta and timeseries objects from WEC dat file.
+
     Input: opened WEC data file
     Output: Dictionary of timeseries with meta-data attached
     """
