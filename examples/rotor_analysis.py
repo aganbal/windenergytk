@@ -71,11 +71,11 @@ def demo_linear_analysis():
     ## It returns the values as a n x 9 matrix (where n is the
     ## number of stations). A single station's values come
     ## as an array within the array
-    [...,
-     [local_radius, local_tip_loss, angle_of_attack,
-     angle_of_rwind, lift_coef, drag_coef,
-     axial_induc_factor, angular_induc_factor, local_power_coef],
-     ...]
+    ## [...,
+    ## [local_radius, local_tip_loss, angle_of_attack,
+    ##  angle_of_rwind, lift_coef, drag_coef,
+    ##  axial_induc_factor, angular_induc_factor, local_power_coef],
+    ##  ...]
 
     
     ## Note that we also specify either "linear" or "nonlinear" for the method.
@@ -84,5 +84,16 @@ def demo_linear_analysis():
                           "linear")
 
 if __name__ == "__main__":
-    print demo_linear_analysis()
+    results = demo_linear_analysis()
+    print "Local properties for blade design"
+    print "%16s %16s %16s %16s %16s" % ("radius","tip loss","angle of attack",
+                                        "lift coefficient","power coefficient")
+    for station in range(len(results)):
+        print "%16.2f %16.2f %16.2f %16.2f %16.2f" % (results[station][0],
+                                                      results[station][1],
+                                                      results[station][2],
+                                                      results[station][4],
+                                                      results[station][-1])
+
+
 
