@@ -37,6 +37,18 @@ import numpy
 from scipy.interpolate import interp1d
 
 
+def deg_to_rad(*args):
+    """Take an optional amount of degree values and replace with radians.
+
+    INPUT
+    *args: Any number of arguments of variables or iterables.
+
+    OUTPUT
+    new_values: Original inputs converted to radians
+    """
+    return 0
+
+
 def q_terms(local_pitch, local_tip_loss, lift_coef_slope, lift_coef_intercept,
             local_solidity):
     """Create the q terms used in simplified angle of attack calculation.
@@ -332,7 +344,7 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
     
     for r in range(sections):
         ## Calculate twist and chord for each section
-        twist = numpy.arctan(2./(3.*tip_speed_ratio[r])) ## partial tip speed ratio ?
+        twist = numpy.arctan(2./(3.*tip_speed_ratio[r])) 
         chord = (8. * numpy.pi * r * numpy.sin(twist))/ (3. * number_blades *
                                              lift_coefficient *
                                              tip_speed_ratio[r])
