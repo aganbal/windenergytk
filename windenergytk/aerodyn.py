@@ -37,28 +37,37 @@ import numpy
 from scipy.interpolate import interp1d
 
 
-def deg_to_rad(*args):
-    """Take an optional amount of degree values and replace with radians.
+def deg_rad(conversion, *args):
+    """Take an optional amount of values and convert between degrees/radians.
 
     INPUT
-    *args: Any number of arguments of ints, floats, and arrays
+    conversion: (str) desired output, either 'degrees' or 'radians'
+    *args: Will accept ints, floats, and ndarrrays (from NumPy)
 
     OUTPUT
-    new_values: Original inputs converted to radians
+    results: Original inputs converted to radians or degrees
     """
+    ## set conversion factor
+    if conversion == "radians":
+        factor = (numpy.pi / 180.)
+    else:
+        factor = (180. / numpy.pi)
+    
     results = []
+    
     ## Iterate through each variable
     for arg in args:
         try:
             iterable = iter(arg)
         except TypeError:
             ## not iterable, just convert it
-            arg = float(arg) * (numpy.pi / 180.)
+            arg = float(arg) * factor
+            
         else:
             ## iterate over each index in possibly multi-d object
             for index in range(len(arg.flat)):
-                arg.flat[index] = float(arg.flat[index]) * (numpy.pi / 180.)
-
+                arg.flat[index] = float(arg.flat[index]) * factor
+                
         ## Add arg to results
         results.append(arg)
 
@@ -403,7 +412,7 @@ def rotor_analysis(rct_matrix, tip_speed_ratio, number_blades, pitch_0,
 
     """
     ## Convert all degrees to radians
-    
+    pitch_0, rct_matrix[:,2] = deg_rad("degrees", pitch_0, rct_matrix[:,2])
 
 
     
