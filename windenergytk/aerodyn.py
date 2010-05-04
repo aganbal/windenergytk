@@ -41,12 +41,28 @@ def deg_to_rad(*args):
     """Take an optional amount of degree values and replace with radians.
 
     INPUT
-    *args: Any number of arguments of variables or iterables.
+    *args: Any number of arguments of ints, floats, and arrays
 
     OUTPUT
     new_values: Original inputs converted to radians
     """
-    return 0
+    results = []
+    ## Iterate through each variable
+    for arg in args:
+        try:
+            iterable = iter(arg)
+        except TypeError:
+            ## not iterable, just convert it
+            arg = float(arg) * (numpy.pi / 180.)
+        else:
+            ## iterate over each index in possibly multi-d object
+            for index in range(len(arg.flat)):
+                arg.flat[index] = float(arg.flat[index]) * (numpy.pi / 180.)
+
+        ## Add arg to results
+        results.append(arg)
+
+    return results
 
 
 def q_terms(local_pitch, local_tip_loss, lift_coef_slope, lift_coef_intercept,
