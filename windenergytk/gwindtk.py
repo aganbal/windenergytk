@@ -114,7 +114,7 @@ class MyFrame(wx.Frame):
         
         # Text results panel
         self.results_panel = wx.Panel(self, -1, style=wx.SIMPLE_BORDER)
-        self.results_panel_text = wx.StaticText(self.results_panel, -1, label="Results Here")
+        self.results_panel_text = wx.StaticText(self.results_panel, -1, label="Numerical Results Here")
         
         # Graphing panel
         self.plot_panel = wxmpl.PlotPanel(self, -1)
@@ -141,6 +141,10 @@ class MyFrame(wx.Frame):
         # End Analysis widgets
         
         # Synthesis widgets
+        self.arma_button = wx.Button(self.notebook_1_pane_2, -1, 'ARMA')
+        self.arma_panel = wx.Panel(self.notebook_1_pane_1, -1, style=wx.RAISED_BORDER)
+        self.arma_panel_btn = wx.Button(self.notebook_1_pane_1, -1, '>>', name='corr')
+        self.arma_sizer = wx.BoxSizer(wx.HORIZONTAL)
         self.mean_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'Mean:')
         self.stdev_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'STDEV:')
         self.npoints_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'No. points:')
@@ -149,8 +153,17 @@ class MyFrame(wx.Frame):
         self.stdev_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
         self.npoints_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
         self.autocorr_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
-        self.arma_button = wx.Button(self.notebook_1_pane_2, -1, 'ARMA')
         # End Synthesis widgets
+        
+        # Aerodyn widgets
+        
+        # End Aerodyn widgets
+        
+        # Mechanics widgets
+        # End Mechanics widgets
+        
+        
+        
         
     def __set_properties(self):
         # begin wxGlade: MyFrame.__set_properties
@@ -622,6 +635,7 @@ class MyFrame(wx.Frame):
             new_timeseries = analysis.block_average(old_ts_dict['timeseries'].compressed(), new_freq)
             new_ts_dict = self.create_ts_dict(new_timeseries, old_ts_dict, new_freq+'_block_avg_of_')
             self.add_timeseries(new_ts_dict)
+            self.refresh_timeseries()
             
             # Set focus
             self.list_box_1.SetFocus()
