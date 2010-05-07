@@ -141,18 +141,19 @@ class MyFrame(wx.Frame):
         # End Analysis widgets
         
         # Synthesis widgets
+        self.synthesis_sizer = wx.BoxSizer(wx.VERTICAL)
         self.arma_button = wx.Button(self.notebook_1_pane_2, -1, 'ARMA')
-        self.arma_panel = wx.Panel(self.notebook_1_pane_1, -1, style=wx.RAISED_BORDER)
-        self.arma_panel_btn = wx.Button(self.notebook_1_pane_1, -1, '>>', name='corr')
+        self.arma_panel = wx.Panel(self.notebook_1_pane_2, -1, style=wx.RAISED_BORDER)
+        self.arma_panel_btn = wx.Button(self.notebook_1_pane_2, -1, '>>', name='arma')
         self.arma_sizer = wx.BoxSizer(wx.HORIZONTAL)
-        self.mean_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'Mean:')
-        self.stdev_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'STDEV:')
-        self.npoints_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'No. points:')
-        self.autocorr_lbl = wx.StaticText(self.notebook_1_pane_2, -1, 'Autocorr:')
-        self.mean_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
-        self.stdev_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
-        self.npoints_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
-        self.autocorr_ctrl = wx.TextCtrl(self.notebook_1_pane_2, -1, '')
+        self.mean_lbl = wx.StaticText(self.arma_panel, -1, 'Mean:')
+        self.stdev_lbl = wx.StaticText(self.arma_panel, -1, 'STDEV:')
+        self.npoints_lbl = wx.StaticText(self.arma_panel, -1, 'No. points:')
+        self.autocorr_lbl = wx.StaticText(self.arma_panel, -1, 'Autocorr:')
+        self.mean_ctrl = wx.TextCtrl(self.arma_panel, -1, '')
+        self.stdev_ctrl = wx.TextCtrl(self.arma_panel, -1, '')
+        self.npoints_ctrl = wx.TextCtrl(self.arma_panel, -1, '')
+        self.autocorr_ctrl = wx.TextCtrl(self.arma_panel, -1, '')
         # End Synthesis widgets
         
         # Aerodyn widgets
@@ -233,6 +234,12 @@ class MyFrame(wx.Frame):
         # End Analysis layout
         
         # Synthesis Layout
+        self.arma_sizer.Add(self.arma_button,1)
+        self.arma_sizer.Add(self.arma_panel_btn,0)
+        self.synthesis_sizer.AddMany(((self.arma_sizer),(self.arma_panel)))
+        self.arma_button.SetMinSize(button_size)
+        self.arma_panel_btn.SetMinSize((40,30))
+        self.arma_panel.Hide()
         self.mean_lbl.Move((10,10))
         self.stdev_lbl.Move((60,10))
         self.npoints_lbl.Move((110,10))
@@ -241,12 +248,12 @@ class MyFrame(wx.Frame):
         self.stdev_ctrl.SetSize((30,-1))
         self.npoints_ctrl.SetSize((30,-1))
         self.autocorr_ctrl.SetSize((30,-1))
-        self.arma_button.SetSize(button_size)
         self.mean_ctrl.Move((10,30))
         self.stdev_ctrl.Move((60,30))
         self.npoints_ctrl.Move((110,30))
         self.autocorr_ctrl.Move((190,30))
         self.arma_button.Move((10,60))
+        self.notebook_1_pane_2.SetSizer(self.synthesis_sizer)
         # End Synthesis Layout
         
         # TS panel
@@ -296,6 +303,7 @@ class MyFrame(wx.Frame):
         
         # Synthesis
         self.Bind(wx.EVT_BUTTON, self.OnARMAButton, self.arma_button)
+        self.Bind(wx.EVT_BUTTON, self.OnTogglePanelButton, self.arma_panel_btn)
         
 
     
@@ -457,7 +465,8 @@ class MyFrame(wx.Frame):
     ## General events
     def OnTogglePanelButton(self, event):
         """Hide or show a panel when toggle button is pressed."""
-        btn_panel_table = {'corr':self.corr_panel,'block':self.block_panel}
+        btn_panel_table = {'corr':self.corr_panel,'block':self.block_panel,
+                           'arma':self.arma_panel}
         name = event.GetEventObject().GetName()
         panel = btn_panel_table[name]
         if panel.IsShown():
@@ -660,6 +669,7 @@ class MyFrame(wx.Frame):
         arma_ts = synthesis.gen_arma(mean, stdev, autocorr, npoints)
         new_ts_dict = self.create_ts_dict(arma_ts, prepend_str='arma_')
         self.add_timeseries(new_ts_dict)
+        self.refresh_timeseries()
     ## End Synthesis Functions
     # End Handler Functions
 
