@@ -353,6 +353,7 @@ def optimum_rotor(lift_coefficient, angle_of_attack, tip_speed_ratio,
     INPUT
     lift_coefficient: (float) airfoil lift coefficient at intended angle attack
     angle_of_attack: (float) angle of attack in degrees
+    tip_speed_ratio: (array-like) tsr at each section of blade
     total_radius: (float) outer radius of turbine blades in meters
     hub_radius: (float) radius of hub, where blades begin
     number_blades: (int) number of turbine blades
