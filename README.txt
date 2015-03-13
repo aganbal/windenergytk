@@ -1,3 +1,8 @@
+Warning: This is a really, REALLY old bit of code I wrote as a student at Marlboro College, for
+UMass Amherst's former Wind Energy Center. Since Google Code has shut down, I am hosting it here 
+for posterity. The interesting bits are the algorithm implementations.
+
+
 The Wind Energy Toolkit
 ------------------------
 
